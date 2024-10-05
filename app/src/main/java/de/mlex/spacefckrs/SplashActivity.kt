@@ -1,14 +1,15 @@
 package de.mlex.spacefckrs
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContextCompat.startActivity
 import de.mlex.spacefckrs.ui.theme.SpaceFckrsTheme
 import kotlinx.coroutines.delay
 
@@ -28,10 +29,10 @@ class SplashActivity : ComponentActivity() {
 @Preview
 @Composable
 private fun SplashScreen() {
+    val activity = LocalContext.current as Activity
     LaunchedEffect(key1 = true) {
         delay(2000)
-        val i = Intent(this@SplashActivity, MainActivity::class.java)
-        startActivity(i)
+        activity.startActivity(Intent(this@SplashActivity, MainActivity::class.java))
     }
 
 }

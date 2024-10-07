@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
+
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import de.mlex.spacefckrs.ui.elements.BottomBar
 import de.mlex.spacefckrs.ui.elements.TopBar
+
 import de.mlex.spacefckrs.ui.theme.SpaceFckrsTheme
 
 class MainActivity : ComponentActivity() {
@@ -103,6 +105,64 @@ fun Aliens() {
                 .padding(4.dp)
         )
 
+@Composable
+fun ScreenSpaceFckrs() {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.Black
+    ) {
+//        Scaffold(
+//            modifier = Modifier
+//                .background(Color.Black),
+//            topBar = { TopBar() },
+//            bottomBar = { TopBar() },
+//        ) {
+//            Aliens()
+//        }
+        Aliens()
+    }
+}
+
+@Composable
+fun Aliens() {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 30.dp, bottom = 30.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Top
+    ) {
+        Alien(
+            color = Color.Red,
+            modifier = Modifier
+                .size(70.dp)
+                .padding(4.dp)
+        )
+        Alien(
+            color = Color.Gray,
+            modifier = Modifier
+                .size(70.dp)
+                .padding(4.dp)
+        )
+        Alien(
+            color = Color.Green,
+            modifier = Modifier
+                .size(70.dp)
+                .padding(4.dp)
+        )
+        Alien(
+            color = Color.Blue,
+            modifier = Modifier
+                .size(70.dp)
+                .padding(4.dp)
+        )
+        Alien(
+            color = Color.Green,
+            modifier = Modifier
+                .size(70.dp)
+                .padding(4.dp)
+        )
+
     }
 }
 
@@ -115,8 +175,4 @@ fun Alien(color: Color, modifier: Modifier = Modifier) {
         colorFilter = ColorFilter.tint(color = color)
     )
 }
-
-
-
-
 

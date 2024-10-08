@@ -19,7 +19,8 @@ fun TopBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black),
+            .background(Color.Black)
+            .padding(4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -28,13 +29,11 @@ fun TopBar() {
             text = "SCORE: 0000",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
         )
         Text(
             text = "LEVEL: 001",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
         )
     }
 }

@@ -15,30 +15,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import de.mlex.spacefckrs.ScreenSpaceFckrs
 
-@Composable
-fun GameOverBox() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-
-    ) {
-        ScreenSpaceFckrs()
-        Spacer(
-            modifier = Modifier
-                .matchParentSize()
-                .fillMaxSize()
-                .background(color = Color.DarkGray.copy(alpha = .8f))
-        )
-        Text(
-            text = "GAME OVER",
-            fontSize = 50.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-
-        )
-    }
-}
+//@Composable
+//fun GameOverBox() {
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize(),
+//        contentAlignment = Alignment.Center
+//
+//    ) {
+//        ScreenSpaceFckrs()
+//        Spacer(
+//            modifier = Modifier
+//                .matchParentSize()
+//                .fillMaxSize()
+//                .background(color = Color.DarkGray.copy(alpha = .8f))
+//        )
+//        Text(
+//            text = "GAME OVER",
+//            fontSize = 50.sp,
+//            fontWeight = FontWeight.Bold,
+//            color = Color.White,
+//            textAlign = TextAlign.Center,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//
+//        )
+//    }
+//}

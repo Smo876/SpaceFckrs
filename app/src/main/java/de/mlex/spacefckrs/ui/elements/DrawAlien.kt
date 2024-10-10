@@ -9,11 +9,10 @@ import androidx.compose.ui.res.painterResource
 import de.mlex.spacefckrs.R
 
 @Composable
-fun Alien(color: Color, modifier: Modifier = Modifier) {
+fun DrawAlien(type: Int, modifier: Modifier = Modifier) {
     Image(
         modifier = modifier,
         contentDescription = "Alien",
-        painter = painterResource(R.drawable.android_alien),
-        colorFilter = ColorFilter.tint(color = color)
+        painter = painterResource(type)
     )
 }

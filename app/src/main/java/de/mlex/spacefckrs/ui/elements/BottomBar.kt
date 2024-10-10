@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BottomBar() {
+fun BottomBar(onCreateNewRowOfAliens: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -33,7 +33,7 @@ fun BottomBar() {
                 modifier = Modifier.size(30.dp),
             )
         }
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { onCreateNewRowOfAliens() }) {
             Icon(
                 Icons.Filled.Check,
                 contentDescription = "go",

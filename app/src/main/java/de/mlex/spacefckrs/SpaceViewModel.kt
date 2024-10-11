@@ -1,11 +1,16 @@
 package de.mlex.spacefckrs
 
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class SpaceViewModel : ViewModel() {
 
-    private val aliens: MutableList<Alien> = mutableListOf()
-    fun getAliens(): MutableList<Alien> {
+    //private val aliens: MutableList<Alien> = mutableListOf()
+    private lateinit var aliens: Flow<MutableList<Alien>>
+
+
+    fun getAliens(): Flow<MutableList<Alien>> {
         return aliens
     }
 

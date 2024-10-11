@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import de.mlex.spacefckrs.ui.elements.BottomBar
@@ -21,7 +23,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val viewModel by viewModels<SpaceViewModel>()
-        val aliens = viewModel.getAliens()
 
 
         super.onCreate(savedInstanceState)
@@ -31,7 +32,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpaceFckrsTheme {
                 // A surface container using the 'background' color from the theme
-                ScreenSpaceFckrs(aliens, viewModel)
+                ScreenSpaceFckrs(viewModel)
             }
         }
     }
@@ -39,11 +40,12 @@ class MainActivity : ComponentActivity() {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ScreenSpaceFckrs(aliens: List<Alien>, viewModel: SpaceViewModel) {
+fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
     Surface(
         modifier = Modifier
             .fillMaxSize(),
     ) {
+        val aliens by viewModel.getAliens().collectAsState(emptyList())
         Scaffold(
             topBar = { TopBar() },
             bottomBar = { BottomBar() { viewModel.createNewRowOfAliens() } },

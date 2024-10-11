@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import de.mlex.spacefckrs.ui.elements.BottomBar
@@ -23,7 +22,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val viewModel by viewModels<SpaceViewModel>()
-
 
         super.onCreate(savedInstanceState)
 
@@ -45,7 +43,8 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
         modifier = Modifier
             .fillMaxSize(),
     ) {
-        val aliens by viewModel.getAliens().collectAsState(emptyList())
+        val aliens: List<Alien> = remember { viewModel.aliens }
+        //val aliens = viewModel.aliens
         Scaffold(
             topBar = { TopBar() },
             bottomBar = { BottomBar() { viewModel.createNewRowOfAliens() } },
@@ -54,6 +53,3 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
         }
     }
 }
-
-
-

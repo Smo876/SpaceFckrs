@@ -1,36 +1,43 @@
 package de.mlex.spacefckrs
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import de.mlex.spacefckrs.data.Alien
+import de.mlex.spacefckrs.data.JustSpace
+import de.mlex.spacefckrs.data.USO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class SpaceViewModel : ViewModel() {
+    private val _isReady = MutableStateFlow(false)
+    val isReady = _isReady.asStateFlow()
 
-    private val _aliens: MutableList<Alien> = mutableListOf()
-    val aliens: MutableList<Alien> = _aliens
+    private var _aliens = MutableStateFlow<List<USO>>(emptyList())
+    val aliens = _aliens.asStateFlow()
+
+    init {
+        createNewRowOfAliens()
+        _isReady.value = true
+    }
 
     fun createNewRowOfAliens() {
+        val newAliens : MutableList<USO> = mutableListOf()
         for (n in 1..5) {
-            lateinit var alien: Alien
-            when ((0..3).random()) {
-                0 -> {
-                    alien = Alien(R.drawable.sf_alien1, 1)
-                }
-
-                1 -> {
-                    alien = Alien(R.drawable.sf_alien1, 2)
-                }
-
-                2 -> {
-                    alien = Alien(R.drawable.sf_alien1, 3)
-                }
-
-                3 -> {
-                    alien = Alien(R.drawable.sf_alien1, 4)
-                }
+            when ((0..5).random()) {
+                0 -> newAliens.add(Alien(R.drawable.sf_alien1, 1))
+                1 -> newAliens.add(Alien(R.drawable.sf_alien2, 2))
+                2 -> newAliens.add(Alien(R.drawable.sf_alien3, 3))
+                3 -> newAliens.add(Alien(R.drawable.sf_alien4, 4))
+                else -> newAliens.add(JustSpace())
             }
-            aliens.add(alien)
         }
-
+        newAliens += _aliens.value.toMutableList()
+        viewModelScope.launch {
+            _aliens.emit(newAliens)
+        }
     }
 }
 
-data class Alien(val type: Int = 0, val live: Int = 0)
+
+

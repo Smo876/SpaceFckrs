@@ -34,7 +34,7 @@ fun DrawAlien(type: Int, life: Int, modifier: Modifier = Modifier) {
             fontWeight = FontWeight.ExtraBold,
             style = TextStyle(
                 shadow = Shadow(
-                    color = Color.Black, Offset(-2.0f, -2.0f), blurRadius = 5f
+                    color = Color.Black, Offset(-1.0f, -1.0f), blurRadius = 4f
                 )
             )
         )

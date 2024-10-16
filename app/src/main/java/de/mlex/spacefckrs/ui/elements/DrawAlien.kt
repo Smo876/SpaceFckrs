@@ -8,7 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -25,9 +29,14 @@ fun DrawAlien(type: Int, life: Int, modifier: Modifier = Modifier) {
             painter = painterResource(type)
         )
         Text(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(bottom = 16.dp, end = 8.dp),
             text = "$life",
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.ExtraBold,
+            style = TextStyle(
+                shadow = Shadow(
+                    color = Color.Black, Offset(-2.0f, -2.0f), blurRadius = 5f
+                )
+            )
         )
     }
 }

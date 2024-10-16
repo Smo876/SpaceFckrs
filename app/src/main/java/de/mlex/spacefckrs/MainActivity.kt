@@ -8,6 +8,8 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -16,8 +18,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import de.mlex.spacefckrs.ui.elements.AttackerScreen
 import de.mlex.spacefckrs.ui.elements.BottomBar
-import de.mlex.spacefckrs.ui.elements.PlayFieldGrid
+import de.mlex.spacefckrs.ui.elements.DefenseScreen
 import de.mlex.spacefckrs.ui.elements.TopBar
 import de.mlex.spacefckrs.ui.theme.SpaceFckrsTheme
 
@@ -77,9 +80,18 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
     ) {
         Scaffold(
             topBar = { TopBar() },
-            bottomBar = { BottomBar() { viewModel.createNewRowOfAliens() } },
+            bottomBar = {
+                BottomBar(viewModel.nextDamage.intValue)
+            },
         ) {
-            PlayFieldGrid(viewModel.aliens.collectAsState())
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                AttackerScreen(viewModel.aliens.collectAsState())
+                DefenseScreen { viewModel.nextMove() }
+            }
         }
     }
 }

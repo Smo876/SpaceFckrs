@@ -20,45 +20,37 @@ fun DefenseScreen(onShoot: () -> Unit) {
             .padding(bottom = 40.dp, start = 14.dp, end = 14.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        IconButton(onClick = { onShoot() }) {
-            DrawCannon(
+            DrawCannon(onShoot,
+                modifier = Modifier
+                    .weight(1f)
+            )
+            DrawCannon(onShoot,
+                modifier = Modifier
+                    .weight(1f)
+            )
+            DrawCannon(onShoot,
+                modifier = Modifier
+                    .weight(1f)
+            )
+            DrawCannon(onShoot,
+                modifier = Modifier
+                    .weight(1f)
+            )
+            DrawCannon(onShoot,
                 modifier = Modifier
                     .weight(1f)
             )
         }
-        IconButton(onClick = { onShoot() }) {
-            DrawCannon(
-                modifier = Modifier
-                    .weight(1f)
-            )
-        }
-        IconButton(onClick = { onShoot() }) {
-            DrawCannon(
-                modifier = Modifier
-                    .weight(1f)
-            )
-        }
-        IconButton(onClick = { onShoot() }) {
-            DrawCannon(
-                modifier = Modifier
-                    .weight(1f)
-            )
-        }
-        IconButton(onClick = { onShoot() }) {
-            DrawCannon(
-                modifier = Modifier
-                    .weight(1f)
-            )
-        }
-    }
 
 }
 
 @Composable
-fun DrawCannon(modifier: Modifier = Modifier) {
-    Image(
-        modifier = modifier.padding(15.dp),
-        contentDescription = "Cannon",
-        painter = painterResource(R.drawable.sf_cannon)
-    )
+fun DrawCannon(onShoot: () -> Unit, modifier: Modifier = Modifier) {
+    IconButton(onClick = { onShoot() }) {
+        Image(
+            modifier = modifier.padding(15.dp),
+            contentDescription = "Cannon",
+            painter = painterResource(R.drawable.sf_cannon)
+        )
+    }
 }

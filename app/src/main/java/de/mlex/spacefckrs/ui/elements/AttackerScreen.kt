@@ -1,5 +1,7 @@
 package de.mlex.spacefckrs.ui.elements
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -14,7 +16,6 @@ import de.mlex.spacefckrs.data.USO
 
 @Composable
 fun AttackerScreen(aliens: State<List<USO>>, modifier: Modifier = Modifier) {
-
     LazyVerticalGrid(
         modifier = modifier
             .padding(top = 40.dp, bottom = 10.dp, start = 24.dp, end = 24.dp),
@@ -32,3 +33,30 @@ fun AttackerScreen(aliens: State<List<USO>>, modifier: Modifier = Modifier) {
         }
     }
 }
+
+//@Composable
+//fun AttackerScreen2(aliens: State<List<USO>>, modifier: Modifier = Modifier) {
+//    Row {
+//        AttackColumn()
+//        AttackColumn()
+//        AttackColumn()
+//        AttackColumn()
+//        AttackColumn()
+//    }
+//}
+//
+//@Composable
+//fun AttackColumn() {
+//    Column {
+//        items(aliens.value.size) { it ->
+//            if (aliens.value[it] is Alien) {
+//                DrawAlien(
+//                    type = aliens.value[it].type,
+//                    life = aliens.value[it].life,
+//                    modifier = Modifier
+//                        .size(90.dp)
+//                )
+//            }
+//        }
+//    }
+//}

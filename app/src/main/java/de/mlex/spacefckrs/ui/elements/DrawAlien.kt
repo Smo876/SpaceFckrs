@@ -15,9 +15,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.mlex.spacefckrs.data.Alien
 
 @Composable
-fun DrawAlien(type: Int, life: Int, modifier: Modifier = Modifier) {
+fun DrawAlien(alien: Alien, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .wrapContentSize(),
@@ -26,11 +27,11 @@ fun DrawAlien(type: Int, life: Int, modifier: Modifier = Modifier) {
         Image(
             modifier = modifier.padding(6.dp),
             contentDescription = "Alien",
-            painter = painterResource(type)
+            painter = painterResource(alien.type)
         )
         Text(
             modifier = Modifier.padding(bottom = 16.dp, end = 8.dp),
-            text = "$life",
+            text = "${alien.life}",
             fontWeight = FontWeight.ExtraBold,
             style = TextStyle(
                 shadow = Shadow(

@@ -20,35 +20,21 @@ fun DefenseScreen(onShoot: () -> Unit) {
             .padding(bottom = 40.dp, start = 14.dp, end = 14.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-            DrawCannon(onShoot,
-                modifier = Modifier
-                    .weight(1f)
-            )
-            DrawCannon(onShoot,
-                modifier = Modifier
-                    .weight(1f)
-            )
-            DrawCannon(onShoot,
-                modifier = Modifier
-                    .weight(1f)
-            )
-            DrawCannon(onShoot,
-                modifier = Modifier
-                    .weight(1f)
-            )
-            DrawCannon(onShoot,
+        for (i in 1..5) {
+            DrawCannon(
+                onShoot,
                 modifier = Modifier
                     .weight(1f)
             )
         }
-
+    }
 }
 
 @Composable
 fun DrawCannon(onShoot: () -> Unit, modifier: Modifier = Modifier) {
-    IconButton(onClick = { onShoot() }) {
+    IconButton(
+        modifier = modifier.padding(14.dp), onClick = { onShoot() }) {
         Image(
-            modifier = modifier.padding(15.dp),
             contentDescription = "Cannon",
             painter = painterResource(R.drawable.sf_cannon)
         )

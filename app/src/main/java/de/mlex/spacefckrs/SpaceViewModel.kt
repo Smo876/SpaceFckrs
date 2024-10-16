@@ -22,6 +22,9 @@ class SpaceViewModel : ViewModel() {
     private var _nextDamage: MutableIntState = mutableIntStateOf(1)
     val nextDamage = _nextDamage.asIntState()
 
+    private val _alienRows: MutableIntState = mutableIntStateOf(0)
+    val alienRows = _alienRows.asIntState()
+
     init {
         nextMove()
         _isReady.value = true
@@ -33,6 +36,7 @@ class SpaceViewModel : ViewModel() {
     }
 
     fun createNewRowOfAliens() {
+        _alienRows.intValue++
         val newAliens: MutableList<USO> = mutableListOf()
         for (n in 1..5) {
             when ((0..5).random()) {

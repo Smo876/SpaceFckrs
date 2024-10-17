@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import de.mlex.spacefckrs.R
 
 @Composable
-fun DefenseScreen(onShoot: () -> Unit) {
+fun DefenseScreen(onShoot: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -22,6 +22,7 @@ fun DefenseScreen(onShoot: () -> Unit) {
     ) {
         for (i in 1..5) {
             DrawCannon(
+                i,
                 onShoot,
                 modifier = Modifier
                     .weight(1f)
@@ -31,9 +32,9 @@ fun DefenseScreen(onShoot: () -> Unit) {
 }
 
 @Composable
-fun DrawCannon(onShoot: () -> Unit, modifier: Modifier = Modifier) {
+fun DrawCannon(cannon: Int, onShoot: (Int) -> Unit, modifier: Modifier = Modifier) {
     IconButton(
-        modifier = modifier.padding(14.dp), onClick = { onShoot() }) {
+        modifier = modifier.padding(14.dp), onClick = { onShoot(cannon) }) {
         Image(
             contentDescription = "Cannon",
             painter = painterResource(R.drawable.sf_cannon)

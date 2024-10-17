@@ -90,7 +90,7 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 AttackerScreen(viewModel.aliens.collectAsState(), viewModel.alienRows.intValue)
-                DefenseScreen { viewModel.nextMove() }
+                DefenseScreen { viewModel.executeMove(it) }
             }
         }
     }

@@ -26,16 +26,28 @@ class SpaceViewModel : ViewModel() {
     val alienRows = _alienRows.asIntState()
 
     init {
-        nextMove()
+        executeMove(0)
         _isReady.value = true
     }
 
-    fun nextMove() {
+    fun executeMove(cannon: Int) {
+        deductDamage(cannon)
         createNewRowOfAliens()
         getNexDamage()
     }
 
-    fun createNewRowOfAliens() {
+    private fun deductDamage(cannon: Int) {
+        for (i in _aliens.value.size..0) {
+            when (_aliens.value[i]) {
+                is Alien -> {
+                    _aliens.value[i].life = -_nextDamage
+                }
+            }
+        }
+
+    }
+
+    private fun createNewRowOfAliens() {
         _alienRows.intValue++
         val newAliens: MutableList<USO> = mutableListOf()
         for (n in 1..5) {
@@ -53,7 +65,7 @@ class SpaceViewModel : ViewModel() {
         }
     }
 
-    fun getNexDamage() {
+    private fun getNexDamage() {
         _nextDamage.value = (1..5).random()
     }
 }

@@ -18,14 +18,14 @@ import de.mlex.spacefckrs.data.USO
 
 
 @Composable
-fun AttackerScreen2(aliens: State<List<USO>>, alienRows: Int, modifier: Modifier = Modifier) {
+fun AttackerScreen(aliens: State<List<USO>>, alienRows: Int, modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         modifier = modifier
             .padding(top = 40.dp, bottom = 10.dp, start = 24.dp, end = 24.dp),
         columns = GridCells.Fixed(5)
     ) {
         items(aliens.value) {
-            when(it) {
+            when (it) {
                 is Alien -> DrawAlien(it, modifier = Modifier.size(90.dp))
                 is JustSpace -> Spacer(Modifier.size(90.dp))
             }
@@ -34,7 +34,7 @@ fun AttackerScreen2(aliens: State<List<USO>>, alienRows: Int, modifier: Modifier
 }
 
 @Composable
-fun AttackerScreen(aliens: State<List<USO>>, alienRows: Int, modifier: Modifier = Modifier) {
+fun AttackerScreen2(aliens: State<List<USO>>, alienRows: Int, modifier: Modifier = Modifier) {
     Row {
         AttackColumn(aliens, alienRows, 1)
         AttackColumn(aliens, alienRows, 2)
@@ -49,7 +49,7 @@ fun AttackColumn(aliens: State<List<USO>>, alienRows: Int, row: Int) {
     Column {
         for (i in 1..alienRows) {
             aliens.value.forEach {
-                when(it) {
+                when (it) {
                     is Alien -> DrawAlien(it, modifier = Modifier.size(90.dp))
                     is JustSpace -> Spacer(Modifier.size(90.dp))
                 }

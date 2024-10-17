@@ -25,26 +25,54 @@ class SpaceViewModel : ViewModel() {
     private val _alienRows: MutableIntState = mutableIntStateOf(0)
     val alienRows = _alienRows.asIntState()
 
+    private val _score: MutableIntState = mutableIntStateOf(0)
+    val score = _score.asIntState()
+
     init {
         executeMove(0)
         _isReady.value = true
     }
 
     fun executeMove(cannon: Int) {
-        deductDamage(cannon)
+        determineDamage(cannon)
         createNewRowOfAliens()
-        getNexDamage()
+        //TODO: berechnung stimmt nicht
+        _score.intValue += nextDamage.intValue
+        getNextDamage()
     }
 
-    private fun deductDamage(cannon: Int) {
-        for (i in _aliens.value.size..0) {
-            when (_aliens.value[i]) {
-                is Alien -> {
-                    _aliens.value[i].life = -_nextDamage
-                }
+    private fun determineDamage(cannon: Int) {
+        var remainingDamage = _nextDamage.intValue
+        _aliens.value
+            .filterIndexed { index, _ ->
+                index == 0 + cannon - 1 ||
+                        index == 5 + cannon - 1 ||
+                        index == 10 + cannon - 1 ||
+                        index == 15 + cannon - 1 ||
+                        index == 20 + cannon - 1
             }
-        }
+            .reversed()
+            .filterIsInstance<Alien>()
+            .forEach {
+                if (remainingDamage > 0) {
+                    if (it.life >= _nextDamage.intValue) {
+                        it.life -= nextDamage.intValue
+                        remainingDamage = 0
+                    } else {
+                        remainingDamage -= it.life
+                        it.life = 0
+                    }
+                }
 
+            }
+        //TODO: tote Aliens löschen
+//        _aliens.value
+//            .filterIsInstance<Alien>()
+//            .forEachIndexed { index, value ->
+//            if (value.life == 0) {
+//                _aliens.value[index].set(JustSpace())
+//            }
+//        }
     }
 
     private fun createNewRowOfAliens() {
@@ -65,8 +93,15 @@ class SpaceViewModel : ViewModel() {
         }
     }
 
-    private fun getNexDamage() {
+    private fun getNextDamage() {
         _nextDamage.value = (1..5).random()
+    }
+
+    //TODO: da passiert einfach nix
+    fun resetGame() {
+        _aliens = MutableStateFlow(emptyList())
+        executeMove(0)
+        _score.intValue = 0
     }
 }
 

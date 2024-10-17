@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TopBar() {
+fun TopBar(score: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -26,7 +26,7 @@ fun TopBar() {
     ) {
         Text(
             modifier = Modifier.padding(4.dp),
-            text = "SCORE: 0000",
+            text = "SCORE: $score",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         )

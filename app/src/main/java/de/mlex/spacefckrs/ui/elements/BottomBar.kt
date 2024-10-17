@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun BottomBar(nextDamage: Int) {
+fun BottomBar(nextDamage: Int, resetGame: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -34,7 +34,7 @@ fun BottomBar(nextDamage: Int) {
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         )
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { resetGame() }) {
             Icon(
                 Icons.Filled.Menu,
                 contentDescription = "menu",

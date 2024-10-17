@@ -79,10 +79,8 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
             .fillMaxSize(),
     ) {
         Scaffold(
-            topBar = { TopBar() },
-            bottomBar = {
-                BottomBar(viewModel.nextDamage.intValue)
-            },
+            topBar = { TopBar(viewModel.score.intValue) },
+            bottomBar = { BottomBar(viewModel.nextDamage.intValue) { viewModel.resetGame() } },
         ) {
             Column(
                 modifier = Modifier

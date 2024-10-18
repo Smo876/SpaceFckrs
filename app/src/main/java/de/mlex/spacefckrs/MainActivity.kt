@@ -87,7 +87,7 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                AttackerScreen(viewModel.aliens.collectAsState(), viewModel.alienRows.intValue)
+                AttackerScreen(viewModel.aliens.collectAsState())
                 DefenseScreen { viewModel.executeMove(it) }
             }
         }

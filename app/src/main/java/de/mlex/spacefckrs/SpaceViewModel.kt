@@ -22,9 +22,6 @@ class SpaceViewModel : ViewModel() {
     private var _nextDamage: MutableIntState = mutableIntStateOf(1)
     val nextDamage = _nextDamage.asIntState()
 
-    private val _alienRows: MutableIntState = mutableIntStateOf(0)
-    val alienRows = _alienRows.asIntState()
-
     private val _score: MutableIntState = mutableIntStateOf(0)
     val score = _score.asIntState()
 
@@ -36,9 +33,8 @@ class SpaceViewModel : ViewModel() {
     fun executeMove(cannon: Int) {
         determineDamage(cannon)
         createNewRowOfAliens()
-        //TODO: berechnung stimmt nicht
-        _score.intValue += nextDamage.intValue
         getNextDamage()
+        deleteDeadAliens()
     }
 
     private fun determineDamage(cannon: Int) {
@@ -55,38 +51,57 @@ class SpaceViewModel : ViewModel() {
             .filterIsInstance<Alien>()
             .forEach {
                 if (remainingDamage > 0) {
-                    if (it.life >= _nextDamage.intValue) {
-                        it.life -= nextDamage.intValue
+                    if (it.life >= remainingDamage) {
+                        it.life -= remainingDamage
+                        _score.intValue += remainingDamage
                         remainingDamage = 0
                     } else {
                         remainingDamage -= it.life
+                        _score.intValue += it.life
                         it.life = 0
                     }
                 }
 
             }
-        //TODO: tote Aliens löschen
-//        _aliens.value
-//            .filterIsInstance<Alien>()
-//            .forEachIndexed { index, value ->
-//            if (value.life == 0) {
-//                _aliens.value[index].set(JustSpace())
-//            }
-//        }
+
+    }
+
+    private fun deleteDeadAliens() {
+        val newAliens: MutableList<USO> = mutableListOf()
+        _aliens.value.reversed().forEach { it ->
+            when (it) {
+                is JustSpace -> newAliens.add(JustSpace())
+                is Alien -> {
+                    if (it.life > 0) {
+                        newAliens.add(it)
+                    } else newAliens.add(JustSpace())
+                }
+            }
+            println(newAliens.size)
+            if (newAliens.size == 5 && !(newAliens.any { it is Alien })) {
+                newAliens.clear()
+                println("list cleared")
+            }
+        }
+        viewModelScope.launch {
+            _aliens.emit(newAliens.reversed())
+        }
     }
 
     private fun createNewRowOfAliens() {
-        _alienRows.intValue++
         val newAliens: MutableList<USO> = mutableListOf()
-        for (n in 1..5) {
-            when ((0..5).random()) {
-                0 -> newAliens.add(Alien(R.drawable.sf_alien1, 1))
-                1 -> newAliens.add(Alien(R.drawable.sf_alien2, 2))
-                2 -> newAliens.add(Alien(R.drawable.sf_alien3, 3))
-                3 -> newAliens.add(Alien(R.drawable.sf_alien4, 4))
-                else -> newAliens.add(JustSpace())
+        do {
+            newAliens.clear()
+            for (n in 1..5) {
+                when ((0..8).random()) {
+                    0 -> newAliens.add(Alien(R.drawable.sf_alien1, 1))
+                    1 -> newAliens.add(Alien(R.drawable.sf_alien2, 2))
+                    2 -> newAliens.add(Alien(R.drawable.sf_alien3, 3))
+                    3 -> newAliens.add(Alien(R.drawable.sf_alien4, 4))
+                    else -> newAliens.add(JustSpace())
+                }
             }
-        }
+        } while (!newAliens.any { it is Alien })
         newAliens += _aliens.value.toMutableList()
         viewModelScope.launch {
             _aliens.emit(newAliens)
@@ -94,12 +109,14 @@ class SpaceViewModel : ViewModel() {
     }
 
     private fun getNextDamage() {
-        _nextDamage.value = (1..5).random()
+        _nextDamage.value = (4..6).random()
     }
 
-    //TODO: da passiert einfach nix
     fun resetGame() {
-        _aliens = MutableStateFlow(emptyList())
+        val newAliens: MutableList<USO> = mutableListOf()
+        viewModelScope.launch {
+            _aliens.emit(newAliens)
+        }
         executeMove(0)
         _score.intValue = 0
     }

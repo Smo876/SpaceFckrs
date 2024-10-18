@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -36,9 +36,10 @@ fun BottomBar(nextDamage: Int, resetGame: () -> Unit) {
         )
         IconButton(onClick = { resetGame() }) {
             Icon(
-                Icons.Filled.Menu,
+                Icons.Filled.Refresh,
                 contentDescription = "menu",
                 modifier = Modifier.size(30.dp),
+                tint = androidx.compose.ui.graphics.Color.Gray
             )
         }
 

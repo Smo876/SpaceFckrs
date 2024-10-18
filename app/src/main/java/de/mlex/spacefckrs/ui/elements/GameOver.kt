@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import de.mlex.spacefckrs.ScreenSpaceFckrs
 
-//@Composable
-//fun GameOverBox() {
+@Composable
+fun GameOverBox() {
 //    Box(
 //        modifier = Modifier
 //            .fillMaxSize(),
@@ -41,4 +41,4 @@ import de.mlex.spacefckrs.ScreenSpaceFckrs
 //
 //        )
 //    }
-//}
+}

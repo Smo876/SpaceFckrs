@@ -9,7 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,20 +22,29 @@ fun TopBar(score: Int) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.Black)
-            .padding(4.dp),
+            .padding(start = 8.dp, end = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val gradientColors = listOf(Color.Red, Color.Blue)
+        Text(
+            text = "SPACE FCKRS",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Blue,
+            style = TextStyle(
+                brush = Brush.linearGradient(
+                    colors = gradientColors
+                )
+
+            )
+        )
         Text(
             modifier = Modifier.padding(4.dp),
             text = "SCORE: $score",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         )
-        Text(
-            text = "LEVEL: 001",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-        )
+
     }
 }

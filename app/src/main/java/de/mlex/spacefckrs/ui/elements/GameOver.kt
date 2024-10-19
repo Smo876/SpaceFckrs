@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,8 +38,6 @@ fun GameOverBox(viewModel: SpaceViewModel) {
             fontWeight = FontWeight.Bold,
             color = Color.White,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth(),
             style = TextStyle(
                 brush = Brush.linearGradient(
                     colors = gradientColors

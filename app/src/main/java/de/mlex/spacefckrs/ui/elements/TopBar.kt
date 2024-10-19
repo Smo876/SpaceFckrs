@@ -11,8 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -22,7 +25,7 @@ fun TopBar(score: Int) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.Black)
-            .padding(start = 8.dp, end = 4.dp),
+            .padding(top = 4.dp, bottom = 4.dp, start = 8.dp, end = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -38,12 +41,28 @@ fun TopBar(score: Int) {
                 )
             )
         )
+
         Text(
-            modifier = Modifier.padding(4.dp),
-            text = "SCORE: $score",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-        )
+            buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(
+                        color = Color.LightGray,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                ) {
+                    append("SCORE: ")
+                }
+                withStyle(
+                    style = SpanStyle(
+                        color = Color.Yellow,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                ) {
+                    append("$score")
+                }
+            })
 
     }
 }

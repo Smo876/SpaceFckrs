@@ -9,10 +9,20 @@ import de.mlex.spacefckrs.data.Alien
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+enum class GameState {
+    GameOver, GameIsRunning
+}
+
 class SpaceViewModel : ViewModel() {
+
+    val gameState: StateFlow<GameState>
 
     private val _isReady = MutableStateFlow(false)
     val isReady = _isReady.asStateFlow()
@@ -29,6 +39,11 @@ class SpaceViewModel : ViewModel() {
     init {
         executeMove(0)
         _isReady.value = true
+
+        gameState = aliens.map {
+            if (it.size > 25) GameState.GameOver
+            else GameState.GameIsRunning
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning)
     }
 
     fun executeMove(cannon: Int) {
@@ -110,11 +125,6 @@ class SpaceViewModel : ViewModel() {
         newAliens += _aliens.value.toMutableList()
         viewModelScope.launch {
             _aliens.emit(newAliens)
-        }
-
-        println(_aliens.value.size)
-        if (_aliens.value.size > 25) {
-            println("Game Over")
         }
     }
 

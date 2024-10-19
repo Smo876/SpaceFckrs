@@ -26,7 +26,7 @@ fun TopBar(score: Int) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val gradientColors = listOf(Color.Red, Color.Blue)
+        val gradientColors = listOf(Color.Blue, Color.Red)
         Text(
             text = "SPACE FCKRS",
             fontSize = 20.sp,
@@ -36,7 +36,6 @@ fun TopBar(score: Int) {
                 brush = Brush.linearGradient(
                     colors = gradientColors
                 )
-
             )
         )
         Text(

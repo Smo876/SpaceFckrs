@@ -9,7 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -30,6 +32,7 @@ fun GameOverBox(viewModel: SpaceViewModel) {
                 .fillMaxSize()
                 .background(color = Color.DarkGray.copy(alpha = .8f))
         )
+        val gradientColors = listOf(Color.Green, Color.Blue)
         Text(
             text = "GAME OVER",
             fontSize = 50.sp,
@@ -37,8 +40,12 @@ fun GameOverBox(viewModel: SpaceViewModel) {
             color = Color.White,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .fillMaxWidth()
-
+                .fillMaxWidth(),
+            style = TextStyle(
+                brush = Brush.linearGradient(
+                    colors = gradientColors
+                )
+            )
         )
     }
 }

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -81,10 +83,14 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
             topBar = { TopBar(viewModel.score.intValue) },
             bottomBar = { BottomBar(viewModel.nextDamage.intValue) { viewModel.resetGame() } },
         ) {
-            if (viewModel.aliens.value.size > 25) GameOverBox(viewModel)
-            else {
-                GameScreen(viewModel)
+            val gameState by viewModel.gameState.collectAsState()
+            when (gameState) {
+                GameState.GameOver -> GameOverBox(viewModel)
+                GameState.GameIsRunning -> GameScreen(viewModel)
             }
+
         }
     }
 }
+
+// Fragen an Franz: individuelle Farben, bessere Indexauflistung, Game an Bildschirmgröße anpassen

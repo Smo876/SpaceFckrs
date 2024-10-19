@@ -8,19 +8,16 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import de.mlex.spacefckrs.ui.elements.AttackerScreen
 import de.mlex.spacefckrs.ui.elements.BottomBar
-import de.mlex.spacefckrs.ui.elements.DefenseScreen
+import de.mlex.spacefckrs.ui.elements.GameOverBox
+import de.mlex.spacefckrs.ui.elements.GameScreen
 import de.mlex.spacefckrs.ui.elements.TopBar
 import de.mlex.spacefckrs.ui.theme.SpaceFckrsTheme
 
@@ -44,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     0.0f
                 )
                 zoomX.interpolator = OvershootInterpolator()
-                zoomX.duration = 1000L
+                zoomX.duration = 500L
                 zoomX.doOnEnd { screen.remove() }
                 val zoomY = ObjectAnimator.ofFloat(
                     screen.iconView,
@@ -53,7 +50,7 @@ class MainActivity : ComponentActivity() {
                     0.0f
                 )
                 zoomY.interpolator = OvershootInterpolator()
-                zoomY.duration = 1000L
+                zoomY.duration = 500L
                 zoomY.doOnEnd { screen.remove() }
 
                 zoomX.start()
@@ -64,13 +61,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpaceFckrsTheme {
                 // A surface container using the 'background' color from the theme
+
                 ScreenSpaceFckrs(viewModel)
+
             }
         }
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition")
 @Composable
 fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
 
@@ -82,13 +81,9 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
             topBar = { TopBar(viewModel.score.intValue) },
             bottomBar = { BottomBar(viewModel.nextDamage.intValue) { viewModel.resetGame() } },
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                AttackerScreen(viewModel.aliens.collectAsState())
-                DefenseScreen { viewModel.executeMove(it) }
+            if (viewModel.aliens.value.size > 25) GameOverBox(viewModel)
+            else {
+                GameScreen(viewModel)
             }
         }
     }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SpaceViewModel : ViewModel() {
+
     private val _isReady = MutableStateFlow(false)
     val isReady = _isReady.asStateFlow()
 
@@ -45,7 +46,11 @@ class SpaceViewModel : ViewModel() {
                         index == 5 + cannon - 1 ||
                         index == 10 + cannon - 1 ||
                         index == 15 + cannon - 1 ||
-                        index == 20 + cannon - 1
+                        index == 20 + cannon - 1 ||
+                        index == 25 + cannon - 1 ||
+                        index == 30 + cannon - 1 ||
+                        index == 35 + cannon - 1 ||
+                        index == 40 + cannon - 1
             }
             .reversed()
             .filterIsInstance<Alien>()
@@ -105,6 +110,11 @@ class SpaceViewModel : ViewModel() {
         newAliens += _aliens.value.toMutableList()
         viewModelScope.launch {
             _aliens.emit(newAliens)
+        }
+
+        println(_aliens.value.size)
+        if (_aliens.value.size > 25) {
+            println("Game Over")
         }
     }
 

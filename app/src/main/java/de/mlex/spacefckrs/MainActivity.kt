@@ -81,15 +81,15 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
     ) {
         Scaffold(
             topBar = { TopBar(viewModel.score.intValue) },
+            content = { padding ->
+                val gameState by viewModel.gameState.collectAsState()
+                when (gameState) {
+                    GameState.GameOver -> GameOverBox(viewModel, padding)
+                    GameState.GameIsRunning -> GameScreen(viewModel, padding)
+                }
+            },
             bottomBar = { BottomBar(viewModel.nextDamage.intValue) { viewModel.resetGame() } },
-        ) {
-            val gameState by viewModel.gameState.collectAsState()
-            when (gameState) {
-                GameState.GameOver -> GameOverBox(viewModel)
-                GameState.GameIsRunning -> GameScreen(viewModel)
-            }
-
-        }
+        )
     }
 }
 

@@ -3,6 +3,7 @@ package de.mlex.spacefckrs.ui.elements
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,11 +25,11 @@ import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
 
 @Composable
-fun GameScreen(viewModel: SpaceViewModel) {
+fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 37.dp, bottom = 50.dp)
+            .padding(padding)
             .background(Color.Black),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -58,7 +59,7 @@ fun DefenseScreen(onShoot: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 18.dp, start = 18.dp, end = 18.dp),
+            .padding(bottom = 12.dp, start = 18.dp, end = 18.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         for (i in 1..5) {

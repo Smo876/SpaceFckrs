@@ -15,18 +15,19 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import de.mlex.spacefckrs.GameState
 import de.mlex.spacefckrs.SpaceViewModel
 import de.mlex.spacefckrs.ui.theme.errorContainerDark
 
 @Composable
-fun GameOverBox(viewModel: SpaceViewModel, padding: PaddingValues) {
+fun GameOverBox(viewModel: SpaceViewModel, padding: PaddingValues, gameState: GameState) {
     Box(
         modifier = Modifier
             .fillMaxSize(),
         contentAlignment = Alignment.Center
 
     ) {
-        GameScreen(viewModel, padding)
+        GameScreen(viewModel, padding, gameState)
         Spacer(
             modifier = Modifier
                 .matchParentSize()

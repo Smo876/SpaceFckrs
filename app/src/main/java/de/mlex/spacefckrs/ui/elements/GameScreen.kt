@@ -19,13 +19,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.mlex.spacefckrs.GameState
 import de.mlex.spacefckrs.SpaceViewModel
 import de.mlex.spacefckrs.data.Alien
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
 
 @Composable
-fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues) {
+fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, gameState: GameState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,7 +35,7 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         AttackerScreen(viewModel.aliens.collectAsState())
-        DefenseScreen { viewModel.executeMove(it) }
+        if (gameState == GameState.GameIsRunning) DefenseScreen { viewModel.executeMove(it) }
     }
 }
 

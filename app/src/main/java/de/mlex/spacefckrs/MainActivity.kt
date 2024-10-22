@@ -84,8 +84,8 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
             content = { padding ->
                 val gameState by viewModel.gameState.collectAsState()
                 when (gameState) {
-                    GameState.GameOver -> GameOverBox(viewModel, padding)
-                    GameState.GameIsRunning -> GameScreen(viewModel, padding)
+                    GameState.GameOver -> GameOverBox(viewModel, padding, gameState)
+                    GameState.GameIsRunning -> GameScreen(viewModel, padding, gameState)
                 }
             },
             bottomBar = { BottomBar(viewModel.nextDamage.intValue) { viewModel.resetGame() } },
@@ -93,4 +93,4 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
     }
 }
 
-// Fragen an Franz: individuelle Farben, bessere Indexauflistung, Game an Bildschirmgröße anpassen
+// Fragen an Franz:  bessere Indexauflistung, Game an Bildschirmgröße anpassen, gameState in den GameScreen durchreichen?

@@ -57,15 +57,7 @@ class SpaceViewModel : ViewModel() {
         var remainingDamage = _nextDamage.intValue
         _aliens.value
             .filterIndexed { index, _ ->
-                index == 0 + cannon - 1 ||
-                        index == 5 + cannon - 1 ||
-                        index == 10 + cannon - 1 ||
-                        index == 15 + cannon - 1 ||
-                        index == 20 + cannon - 1 ||
-                        index == 25 + cannon - 1 ||
-                        index == 30 + cannon - 1 ||
-                        index == 35 + cannon - 1 ||
-                        index == 40 + cannon - 1
+                index % 5 == cannon - 1
             }
             .reversed()
             .filterIsInstance<Alien>()

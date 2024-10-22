@@ -10,6 +10,7 @@ import de.mlex.spacefckrs.data.Alien
 import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,6 +41,8 @@ class SpaceViewModel : ViewModel() {
     private val _score: MutableIntState = mutableIntStateOf(0)
     val score = _score.asIntState()
 
+
+
     init {
         executeMove(0)
         _isReady.value = true
@@ -53,7 +56,11 @@ class SpaceViewModel : ViewModel() {
     fun executeMove(cannon: Int) {
         determineDamage(cannon)
         deleteDeadAliens()
-        createNewRowOfAliens()
+        viewModelScope.launch {
+            delay(700)
+            createNewRowOfAliens()
+        }
+
         getNextDamage()
     }
 
@@ -76,7 +83,7 @@ class SpaceViewModel : ViewModel() {
                         _score.intValue += it.life
                         it.life = 0
                     }
-                    if (it.life == 0) aniExpIsPlaying.value = true
+                    if (it.life <= 0) aniExpIsPlaying.value = true
                 }
             }
     }

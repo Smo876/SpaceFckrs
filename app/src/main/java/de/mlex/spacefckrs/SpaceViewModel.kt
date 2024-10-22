@@ -3,9 +3,11 @@ package de.mlex.spacefckrs
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.asIntState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.mlex.spacefckrs.data.Alien
+import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,8 @@ enum class GameState {
 class SpaceViewModel : ViewModel() {
 
     val gameState: StateFlow<GameState>
+
+    var aniExpIsPlaying = mutableStateOf(false)
 
     private val _isReady = MutableStateFlow(false)
     val isReady = _isReady.asStateFlow()
@@ -48,9 +52,9 @@ class SpaceViewModel : ViewModel() {
 
     fun executeMove(cannon: Int) {
         determineDamage(cannon)
+        deleteDeadAliens()
         createNewRowOfAliens()
         getNextDamage()
-        deleteDeadAliens()
     }
 
     private fun determineDamage(cannon: Int) {
@@ -72,10 +76,9 @@ class SpaceViewModel : ViewModel() {
                         _score.intValue += it.life
                         it.life = 0
                     }
+                    if (it.life == 0) aniExpIsPlaying.value = true
                 }
-
             }
-
     }
 
     private fun deleteDeadAliens() {
@@ -86,8 +89,9 @@ class SpaceViewModel : ViewModel() {
                 is Alien -> {
                     if (it.life > 0) {
                         newAliens.add(it)
-                    } else newAliens.add(JustSpace())
+                    } else newAliens.add(JustScrap())
                 }
+                is JustScrap -> newAliens.add(JustSpace())
             }
             println(newAliens.size)
             if (newAliens.size == 5 && !(newAliens.any { it is Alien })) {

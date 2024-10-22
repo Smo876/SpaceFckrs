@@ -75,6 +75,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
 
+
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -93,4 +94,4 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
     }
 }
 
-// Fragen an Franz:  bessere Indexauflistung, Game an Bildschirmgröße anpassen, gameState in den GameScreen durchreichen?
+// Fragen an Franz: Game an Bildschirmgröße anpassen, gameState in den GameScreen durchreichen?, gezielte Explosion

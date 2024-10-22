@@ -14,19 +14,42 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import de.mlex.spacefckrs.GameState
+import de.mlex.spacefckrs.R
 import de.mlex.spacefckrs.SpaceViewModel
 import de.mlex.spacefckrs.data.Alien
+import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
 
 @Composable
 fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, gameState: GameState) {
+    val aniExplosion by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.explosion))
+    val aniExpProgress by animateLottieCompositionAsState(
+        composition = aniExplosion,
+        isPlaying = viewModel.aniExpIsPlaying.value
+    )
+
+    LaunchedEffect(key1 = aniExpProgress) {
+        if (aniExpProgress == 0f) {
+            viewModel.aniExpIsPlaying.value = true
+        }
+        if (aniExpProgress == 1f) {
+            viewModel.aniExpIsPlaying.value = false
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,13 +57,18 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, gameState: Gam
             .background(Color.Black),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        AttackerScreen(viewModel.aliens.collectAsState())
+        AttackerScreen(viewModel.aliens.collectAsState(), aniExplosion, aniExpProgress)
         if (gameState == GameState.GameIsRunning) DefenseScreen { viewModel.executeMove(it) }
     }
 }
 
 @Composable
-fun AttackerScreen(aliens: State<List<USO>>, modifier: Modifier = Modifier) {
+fun AttackerScreen(
+    aliens: State<List<USO>>,
+    aniExplosion: LottieComposition?,
+    aniExpProgress: Float,
+    modifier: Modifier = Modifier
+) {
     LazyVerticalGrid(
         modifier = modifier
             .padding(start = 24.dp, end = 24.dp),
@@ -50,6 +78,12 @@ fun AttackerScreen(aliens: State<List<USO>>, modifier: Modifier = Modifier) {
             when (it) {
                 is Alien -> DrawAlien(it, modifier = Modifier.size(90.dp))
                 is JustSpace -> Spacer(Modifier.size(90.dp))
+                is JustScrap -> {
+                    if (aniExpProgress != 1f) {
+                        LottieAnimation(composition = aniExplosion, progress = { aniExpProgress })
+                        Spacer(Modifier.size(90.dp))
+                    }
+                }
             }
         }
     }

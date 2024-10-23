@@ -1,5 +1,6 @@
 package de.mlex.spacefckrs
 
+import android.util.Log
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.asIntState
 import androidx.compose.runtime.mutableIntStateOf
@@ -10,7 +11,6 @@ import de.mlex.spacefckrs.data.Alien
 import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -42,9 +42,8 @@ class SpaceViewModel : ViewModel() {
     val score = _score.asIntState()
 
 
-
     init {
-        executeMove(0)
+        reset()
         _isReady.value = true
 
         gameState = aliens.map {
@@ -53,62 +52,72 @@ class SpaceViewModel : ViewModel() {
         }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning)
     }
 
-    fun executeMove(cannon: Int) {
-        determineDamage(cannon)
-        deleteDeadAliens()
-        viewModelScope.launch {
-            delay(700)
-            createNewRowOfAliens()
-        }
-
-        getNextDamage()
-    }
-
-    private fun determineDamage(cannon: Int) {
+    fun determineDamageAndExplode(cannon: Int) {
         var remainingDamage = _nextDamage.intValue
-        _aliens.value
-            .filterIndexed { index, _ ->
-                index % 5 == cannon - 1
-            }
-            .reversed()
-            .filterIsInstance<Alien>()
-            .forEach {
+        var hasChanged = false
+        val newList = _aliens.value.reversed().mapIndexed { index, field ->
+            if (field is Alien && index % 5 == 5 - cannon) {
                 if (remainingDamage > 0) {
-                    if (it.life >= remainingDamage) {
-                        it.life -= remainingDamage
+                    if (field.life >= remainingDamage) {
+                        field.life -= remainingDamage
                         _score.intValue += remainingDamage
                         remainingDamage = 0
                     } else {
-                        remainingDamage -= it.life
-                        _score.intValue += it.life
-                        it.life = 0
+                        remainingDamage -= field.life
+                        _score.intValue += field.life
+                        field.life = 0
                     }
-                    if (it.life <= 0) aniExpIsPlaying.value = true
                 }
-            }
+                if (field.life == 0) {
+                    hasChanged = true
+                    JustScrap()
+                } else field
+            } else field
+        }.reversed()
+        if (hasChanged) {
+            _aliens.tryEmit(newList)
+            aniExpIsPlaying.value = true
+        } else cleanUp()
     }
 
-    private fun deleteDeadAliens() {
-        val newAliens: MutableList<USO> = mutableListOf()
-        _aliens.value.reversed().forEach { it ->
-            when (it) {
-                is JustSpace -> newAliens.add(JustSpace())
-                is Alien -> {
-                    if (it.life > 0) {
-                        newAliens.add(it)
-                    } else newAliens.add(JustScrap())
-                }
-                is JustScrap -> newAliens.add(JustSpace())
-            }
-            println(newAliens.size)
-            if (newAliens.size == 5 && !(newAliens.any { it is Alien })) {
-                newAliens.clear()
-                println("list cleared")
-            }
+    fun cleanUp() {
+
+        cleanUpScraps()
+        cleanUpFirstRow()
+        reset()
+    }
+
+    private fun reset() {
+
+        createNewRowOfAliens()
+        getNextDamage()
+    }
+
+    private fun cleanUpScraps() {
+
+        var hasChanged = false
+        val newList = _aliens.value.map {
+            if (it is JustScrap) {
+                hasChanged = true
+                JustSpace()
+            } else it
         }
-        viewModelScope.launch {
-            _aliens.emit(newAliens.reversed())
+        if (hasChanged) {
+            _aliens.tryEmit(newList)
         }
+
+    }
+
+    private fun cleanUpFirstRow() {
+
+        val hasEmptyRow = _aliens.value.chunked(5).last().none { it is Alien }
+        if (hasEmptyRow) {
+            Log.i("cleanUpFirstRow", "row deleted")
+            val newList = _aliens.value.chunked(5).toMutableList()
+            newList.removeAt(newList.lastIndex)
+            viewModelScope.launch { _aliens.emit(newList.flatten()) }
+        }
+
     }
 
     private fun createNewRowOfAliens() {
@@ -132,15 +141,15 @@ class SpaceViewModel : ViewModel() {
     }
 
     private fun getNextDamage() {
-        _nextDamage.value = (4..6).random()
+        _nextDamage.intValue = (4..6).random()
     }
 
     fun resetGame() {
-        val newAliens: MutableList<USO> = mutableListOf()
+
         viewModelScope.launch {
-            _aliens.emit(newAliens)
+            _aliens.emit(emptyList())
         }
-        executeMove(0)
+        reset()
         _score.intValue = 0
     }
 }

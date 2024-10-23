@@ -43,10 +43,8 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, gameState: Gam
     )
 
     LaunchedEffect(key1 = aniExpProgress) {
-        if (aniExpProgress == 0f) {
-            viewModel.aniExpIsPlaying.value = true
-        }
         if (aniExpProgress == 1f) {
+            viewModel.cleanUp()
             viewModel.aniExpIsPlaying.value = false
         }
     }
@@ -58,7 +56,7 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, gameState: Gam
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         AttackerScreen(viewModel.aliens.collectAsState(), aniExplosion, aniExpProgress)
-        if (gameState == GameState.GameIsRunning) DefenseScreen { viewModel.executeMove(it) }
+        if (gameState == GameState.GameIsRunning) DefenseScreen { viewModel.determineDamageAndExplode(it) }
     }
 }
 

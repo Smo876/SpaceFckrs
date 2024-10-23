@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpaceFckrsTheme {
                 // A surface container using the 'background' color from the theme
-
+                //LocalContext.current.
                 ScreenSpaceFckrs(viewModel)
 
             }
@@ -74,7 +74,6 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition")
 @Composable
 fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
-
 
     Surface(
         modifier = Modifier
@@ -94,4 +93,4 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
     }
 }
 
-// Fragen an Franz: Game an Bildschirmgröße anpassen, gameState in den GameScreen durchreichen?, gezielte Explosion
+// Fragen an Franz: Game an Bildschirmgröße anpassen, gameState in den GameScreen durchreichen?

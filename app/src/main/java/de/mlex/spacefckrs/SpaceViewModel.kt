@@ -1,10 +1,8 @@
 package de.mlex.spacefckrs
 
-import android.util.Log
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.asIntState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.mlex.spacefckrs.data.Alien
@@ -27,7 +25,8 @@ class SpaceViewModel : ViewModel() {
 
     val gameState: StateFlow<GameState>
 
-    var aniExpIsPlaying = mutableStateOf(false)
+    private val _aniExpIsPlaying = MutableStateFlow(false)
+    val aniExpIsPlaying = _aniExpIsPlaying.asStateFlow()
 
     private val _isReady = MutableStateFlow(false)
     val isReady = _isReady.asStateFlow()
@@ -44,12 +43,11 @@ class SpaceViewModel : ViewModel() {
 
     init {
         reset()
-        _isReady.value = true
-
         gameState = aliens.map {
             if (it.size > 25) GameState.GameOver
             else GameState.GameIsRunning
         }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning)
+        _isReady.value = true
     }
 
     fun determineDamageAndExplode(cannon: Int) {
@@ -76,14 +74,14 @@ class SpaceViewModel : ViewModel() {
         }.reversed()
         if (hasChanged) {
             _aliens.tryEmit(newList)
-            aniExpIsPlaying.value = true
+            _aniExpIsPlaying.value = true
         } else cleanUp()
     }
 
     fun cleanUp() {
-
+        _aniExpIsPlaying.value = false
         cleanUpScraps()
-        cleanUpFirstRow()
+        cleanEmptyRows()
         reset()
     }
 
@@ -108,16 +106,28 @@ class SpaceViewModel : ViewModel() {
 
     }
 
-    private fun cleanUpFirstRow() {
-
-        val hasEmptyRow = _aliens.value.chunked(5).last().none { it is Alien }
-        if (hasEmptyRow) {
-            Log.i("cleanUpFirstRow", "row deleted")
-            val newList = _aliens.value.chunked(5).toMutableList()
-            newList.removeAt(newList.lastIndex)
-            viewModelScope.launch { _aliens.emit(newList.flatten()) }
-        }
-
+    //TODO: hasChanged einbauen und nur dann emiten
+    private fun cleanEmptyRows() {
+        var hasSeenAlien = false
+        var hasDeleteOneRow = false
+        val newList = _aliens.value
+            .chunked(5)
+            .reversed()
+            .asSequence()
+            .onEach { chunk ->
+                if (chunk.any { it is Alien }) {
+                    hasSeenAlien = true
+                }
+            }
+            .filterNot { chunk ->
+                val filter = chunk.none { it is Alien } && !hasDeleteOneRow
+                if (filter && hasSeenAlien) hasDeleteOneRow = true
+                filter
+            }
+            .toList()
+            .reversed()
+            .flatten()
+        viewModelScope.launch { _aliens.emit(newList) }
     }
 
     private fun createNewRowOfAliens() {
@@ -125,7 +135,7 @@ class SpaceViewModel : ViewModel() {
         do {
             newAliens.clear()
             for (n in 1..5) {
-                when ((0..8).random()) {
+                when ((0..18).random()) {
                     0 -> newAliens.add(Alien(R.drawable.sf_alien1, 1))
                     1 -> newAliens.add(Alien(R.drawable.sf_alien2, 2))
                     2 -> newAliens.add(Alien(R.drawable.sf_alien3, 3))

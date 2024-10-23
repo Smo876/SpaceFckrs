@@ -12,9 +12,16 @@ import de.mlex.spacefckrs.R
 
 
 @Composable
-fun DrawCannon(cannon: Int, onShoot: (Int) -> Unit, modifier: Modifier = Modifier) {
+fun DrawCannon(
+    isRunning: Boolean,
+    cannon: Int,
+    onShoot: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     IconButton(
-        modifier = modifier, onClick = { onShoot(cannon) }) {
+        modifier = modifier,
+        enabled = isRunning,
+        onClick = { onShoot(cannon) }) {
         Image(
             contentDescription = "Cannon",
             painter = painterResource(R.drawable.sf_cannon),

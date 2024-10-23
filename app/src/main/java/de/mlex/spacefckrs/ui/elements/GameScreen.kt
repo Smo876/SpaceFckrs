@@ -39,14 +39,11 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, gameState: Gam
     val aniExplosion by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.explosion))
     val aniExpProgress by animateLottieCompositionAsState(
         composition = aniExplosion,
-        isPlaying = viewModel.aniExpIsPlaying.value
+        isPlaying = viewModel.aniExpIsPlaying.collectAsState().value
     )
 
     LaunchedEffect(key1 = aniExpProgress) {
-        if (aniExpProgress == 1f) {
-            viewModel.cleanUp()
-            viewModel.aniExpIsPlaying.value = false
-        }
+        if (aniExpProgress == 1f) viewModel.cleanUp()
     }
     Column(
         modifier = Modifier
@@ -56,7 +53,8 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, gameState: Gam
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         AttackerScreen(viewModel.aliens.collectAsState(), aniExplosion, aniExpProgress)
-        if (gameState == GameState.GameIsRunning) DefenseScreen { viewModel.determineDamageAndExplode(it) }
+        DefenseScreen(gameState == GameState.GameIsRunning) { viewModel.determineDamageAndExplode(it) }
+        //if (gameState == GameState.GameIsRunning) DefenseScreen(true) { viewModel.determineDamageAndExplode(it) }
     }
 }
 
@@ -88,7 +86,7 @@ fun AttackerScreen(
 }
 
 @Composable
-fun DefenseScreen(onShoot: (Int) -> Unit) {
+fun DefenseScreen(isRunning: Boolean, onShoot: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,7 +94,7 @@ fun DefenseScreen(onShoot: (Int) -> Unit) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         for (i in 1..5) {
-            DrawCannon(i, onShoot, modifier = Modifier.weight(1f))
+            DrawCannon(isRunning, i, onShoot, modifier = Modifier.weight(1f))
         }
     }
 }

@@ -76,7 +76,7 @@ fun AttackerScreen(
                 is JustSpace -> Spacer(Modifier.size(90.dp))
                 is JustScrap -> {
                     if (aniExpProgress != 1f) {
-                        LottieAnimation(composition = aniExplosion, progress = { aniExpProgress })
+                        LottieAnimation(modifier = Modifier.padding(top=18.dp),composition = aniExplosion, progress = { aniExpProgress })
                         Spacer(Modifier.size(90.dp))
                     }
                 }

@@ -135,7 +135,7 @@ class SpaceViewModel : ViewModel() {
         do {
             newAliens.clear()
             for (n in 1..5) {
-                when ((0..18).random()) {
+                when ((0..12).random()) {
                     0 -> newAliens.add(Alien(R.drawable.sf_alien1, 1))
                     1 -> newAliens.add(Alien(R.drawable.sf_alien2, 2))
                     2 -> newAliens.add(Alien(R.drawable.sf_alien3, 3))

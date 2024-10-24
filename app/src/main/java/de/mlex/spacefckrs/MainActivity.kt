@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         //TODO: fullscreen Modus
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                !viewModel.isReady.value
+                !viewModel.viewModelIsReady.value
             }
             setOnExitAnimationListener { screen ->
                 val zoomX = ObjectAnimator.ofFloat(

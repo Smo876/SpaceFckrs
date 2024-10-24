@@ -25,11 +25,12 @@ class SpaceViewModel : ViewModel() {
 
     val gameState: StateFlow<GameState>
 
+
     private val _aniExpIsPlaying = MutableStateFlow(false)
     val aniExpIsPlaying = _aniExpIsPlaying.asStateFlow()
 
-    private val _isReady = MutableStateFlow(false)
-    val isReady = _isReady.asStateFlow()
+    private val _viewModelIsReady = MutableStateFlow(false)
+    val viewModelIsReady = _viewModelIsReady.asStateFlow()
 
     private var _aliens = MutableStateFlow<List<USO>>(emptyList())
     val aliens = _aliens.asStateFlow()
@@ -47,87 +48,12 @@ class SpaceViewModel : ViewModel() {
             if (it.size > 25) GameState.GameOver
             else GameState.GameIsRunning
         }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning)
-        _isReady.value = true
-    }
-
-    fun determineDamageAndExplode(cannon: Int) {
-        var remainingDamage = _nextDamage.intValue
-        var hasChanged = false
-        val newList = _aliens.value.reversed().mapIndexed { index, field ->
-            if (field is Alien && index % 5 == 5 - cannon) {
-                if (remainingDamage > 0) {
-                    if (field.life >= remainingDamage) {
-                        field.life -= remainingDamage
-                        _score.intValue += remainingDamage
-                        remainingDamage = 0
-                    } else {
-                        remainingDamage -= field.life
-                        _score.intValue += field.life
-                        field.life = 0
-                    }
-                }
-                if (field.life == 0) {
-                    hasChanged = true
-                    JustScrap()
-                } else field
-            } else field
-        }.reversed()
-        if (hasChanged) {
-            _aliens.tryEmit(newList)
-            _aniExpIsPlaying.value = true
-        } else cleanUp()
-    }
-
-    fun cleanUp() {
-        _aniExpIsPlaying.value = false
-        cleanUpScraps()
-        cleanEmptyRows()
-        reset()
+        _viewModelIsReady.value = true
     }
 
     private fun reset() {
-
         createNewRowOfAliens()
         getNextDamage()
-    }
-
-    private fun cleanUpScraps() {
-
-        var hasChanged = false
-        val newList = _aliens.value.map {
-            if (it is JustScrap) {
-                hasChanged = true
-                JustSpace()
-            } else it
-        }
-        if (hasChanged) {
-            _aliens.tryEmit(newList)
-        }
-
-    }
-
-    //TODO: hasChanged einbauen und nur dann emiten
-    private fun cleanEmptyRows() {
-        var hasSeenAlien = false
-        var hasDeleteOneRow = false
-        val newList = _aliens.value
-            .chunked(5)
-            .reversed()
-            .asSequence()
-            .onEach { chunk ->
-                if (chunk.any { it is Alien }) {
-                    hasSeenAlien = true
-                }
-            }
-            .filterNot { chunk ->
-                val filter = chunk.none { it is Alien } && !hasDeleteOneRow
-                if (filter && hasSeenAlien) hasDeleteOneRow = true
-                filter
-            }
-            .toList()
-            .reversed()
-            .flatten()
-        viewModelScope.launch { _aliens.emit(newList) }
     }
 
     private fun createNewRowOfAliens() {
@@ -154,13 +80,89 @@ class SpaceViewModel : ViewModel() {
         _nextDamage.intValue = (4..6).random()
     }
 
-    fun resetGame() {
+    fun determineDamageAndExplode(cannon: Int) {
+        var remainingDamage = _nextDamage.intValue
+        var hasChanged = false
+        val newList = _aliens.value
+            .reversed()
+            .mapIndexed { index, field ->
+                if (field is Alien && index % 5 == 5 - cannon) {
+                    if (remainingDamage > 0) {
+                        if (field.life >= remainingDamage) {
+                            field.life -= remainingDamage
+                            _score.intValue += remainingDamage
+                            remainingDamage = 0
+                        } else {
+                            remainingDamage -= field.life
+                            _score.intValue += field.life
+                            field.life = 0
+                        }
+                    }
+                    if (field.life == 0) {
+                        hasChanged = true
+                        JustScrap()
+                    } else field
+                } else field
+            }.reversed()
 
+        if (hasChanged) {
+            _aliens.tryEmit(newList)
+            _aniExpIsPlaying.value = true
+        } else cleanUp()
+    }
+
+    fun cleanUp() {
+        _aniExpIsPlaying.value = false
+        cleanUpScraps()
+        cleanEmptyRows()
+        reset()
+    }
+
+    private fun cleanUpScraps() {
+        var hasChanged = false
+        val newList = _aliens.value.map {
+            if (it is JustScrap) {
+                hasChanged = true
+                JustSpace()
+            } else it
+        }
+        if (hasChanged) {
+            viewModelScope.launch {
+                _aliens.emit(newList)
+            }
+        }
+    }
+
+    //TODO: hasChanged einbauen und nur dann emiten
+    private fun cleanEmptyRows() {
+        var hasSeenAlien = false
+        var hasDeleteOneRow = false
+        val newList = _aliens.value
+            .chunked(5)
+            .reversed()
+            .asSequence()
+            .onEach { chunk ->
+                if (chunk.any { it is Alien }) {
+                    hasSeenAlien = true
+                }
+            }
+            .filterNot { chunk ->
+                val filter = chunk.none { it is Alien } && !hasDeleteOneRow
+                if (filter && hasSeenAlien) hasDeleteOneRow = true
+                filter
+            }
+            .toList()
+            .reversed()
+            .flatten()
+        viewModelScope.launch { _aliens.emit(newList) }
+    }
+
+    fun resetGame() {
         viewModelScope.launch {
             _aliens.emit(emptyList())
         }
-        reset()
         _score.intValue = 0
+        reset()
     }
 }
 

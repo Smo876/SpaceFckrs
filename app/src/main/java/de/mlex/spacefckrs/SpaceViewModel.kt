@@ -21,10 +21,9 @@ enum class GameState {
     GameOver, GameIsRunning
 }
 
-class SpaceViewModel : ViewModel() {
+class SpaceViewModel() : ViewModel() {
 
     val gameState: StateFlow<GameState>
-
 
     private val _aniExpIsPlaying = MutableStateFlow(false)
     val aniExpIsPlaying = _aniExpIsPlaying.asStateFlow()
@@ -165,6 +164,4 @@ class SpaceViewModel : ViewModel() {
         reset()
     }
 }
-
-
 

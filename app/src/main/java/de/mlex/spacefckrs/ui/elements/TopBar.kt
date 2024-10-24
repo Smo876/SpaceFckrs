@@ -28,7 +28,7 @@ import de.mlex.spacefckrs.ui.theme.backgroundDark
 import de.mlex.spacefckrs.ui.theme.onPrimaryContainerDark
 
 @Composable
-fun TopBar(score: Int) {
+fun TopBar(score: Int, hightscore: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -75,6 +75,33 @@ fun TopBar(score: Int) {
                         )
                     ) {
                         append("$score")
+                    }
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color.LightGray,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+                    ) {
+                        append(" (")
+                    }
+                    withStyle(
+                        style = SpanStyle(
+                            color = onPrimaryContainerDark,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+                    ) {
+                        append("$hightscore")
+                    }
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color.LightGray,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+                    ) {
+                        append(")")
                     }
                 })
         }

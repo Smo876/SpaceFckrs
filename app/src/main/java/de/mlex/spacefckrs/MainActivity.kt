@@ -8,6 +8,7 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -82,10 +83,12 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
         Scaffold(
             topBar = { TopBar(viewModel.score.intValue) },
             content = { padding ->
-                val gameState by viewModel.gameState.collectAsState()
-                when (gameState) {
-                    GameState.GameOver -> GameOverBox(viewModel, padding)
-                    GameState.GameIsRunning -> GameScreen(viewModel, padding)
+                Box() {
+                    GameScreen(viewModel, padding)
+                    val gameState by viewModel.gameState.collectAsState()
+                    if (gameState == GameState.GameOver) {
+                        GameOverBox()
+                    }
                 }
             },
             bottomBar = { BottomBar(viewModel.nextDamage.intValue) { viewModel.resetGame() } },

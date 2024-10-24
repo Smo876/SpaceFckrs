@@ -99,7 +99,7 @@ fun BottomBar(nextDamage: Int, resetGame: () -> Unit) {
                     modifier = Modifier
                         .rotate(degree.value)
                         .size(30.dp),
-                    tint = Color.Gray
+                    tint = Color.LightGray
                 )
             }
         }

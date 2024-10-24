@@ -132,8 +132,8 @@ class SpaceViewModel() : ViewModel() {
         }
     }
 
-    //TODO: hasChanged einbauen und nur dann emiten
     private fun cleanEmptyRows() {
+        var hasChanged = false
         var hasSeenAlien = false
         var hasDeleteOneRow = false
         val newList = _aliens.value
@@ -148,12 +148,17 @@ class SpaceViewModel() : ViewModel() {
             .filterNot { chunk ->
                 val filter = chunk.none { it is Alien } && !hasDeleteOneRow
                 if (filter && hasSeenAlien) hasDeleteOneRow = true
+                hasChanged = true
                 filter
             }
             .toList()
             .reversed()
             .flatten()
-        viewModelScope.launch { _aliens.emit(newList) }
+        if (hasChanged) {
+            viewModelScope.launch {
+                _aliens.emit(newList)
+            }
+        }
     }
 
     fun resetGame() {

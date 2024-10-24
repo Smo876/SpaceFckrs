@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpaceFckrsTheme {
                 // A surface container using the 'background' color from the theme
-                //LocalContext.current.
+                //LocalContext.current.  <- zum Messen der Bildschirmgrößte
                 ScreenSpaceFckrs(viewModel)
 
             }
@@ -84,8 +84,8 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
             content = { padding ->
                 val gameState by viewModel.gameState.collectAsState()
                 when (gameState) {
-                    GameState.GameOver -> GameOverBox(viewModel, padding, gameState)
-                    GameState.GameIsRunning -> GameScreen(viewModel, padding, gameState)
+                    GameState.GameOver -> GameOverBox(viewModel, padding)
+                    GameState.GameIsRunning -> GameScreen(viewModel, padding)
                 }
             },
             bottomBar = { BottomBar(viewModel.nextDamage.intValue) { viewModel.resetGame() } },
@@ -93,4 +93,4 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel) {
     }
 }
 
-// Fragen an Franz: Game an Bildschirmgröße anpassen, gameState in den GameScreen durchreichen?
+// Fragen an Franz: Game an Bildschirmgröße anpassen

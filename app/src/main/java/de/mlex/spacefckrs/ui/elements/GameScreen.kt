@@ -35,7 +35,7 @@ import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
 
 @Composable
-fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, gameState: GameState) {
+fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues) {
     val aniExplosion by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.explosion))
     val aniExpProgress by animateLottieCompositionAsState(
         composition = aniExplosion,
@@ -53,7 +53,7 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, gameState: Gam
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         AttackerScreen(viewModel.aliens.collectAsState(), aniExplosion, aniExpProgress)
-        DefenseScreen(gameState == GameState.GameIsRunning) { viewModel.determineDamageAndExplode(it) }
+        DefenseScreen(viewModel.gameState.collectAsState().value) { viewModel.determineDamageAndExplode(it) }
         //if (gameState == GameState.GameIsRunning) DefenseScreen(true) { viewModel.determineDamageAndExplode(it) }
     }
 }
@@ -76,8 +76,7 @@ fun AttackerScreen(
                 is JustSpace -> Spacer(Modifier.size(90.dp))
                 is JustScrap -> {
                     if (aniExpProgress != 1f) {
-                        LottieAnimation(modifier = Modifier.padding(top=18.dp),composition = aniExplosion, progress = { aniExpProgress })
-                        Spacer(Modifier.size(90.dp))
+                        LottieAnimation(modifier = Modifier.padding(top=16.dp),composition = aniExplosion, progress = { aniExpProgress })
                     }
                 }
             }
@@ -86,7 +85,7 @@ fun AttackerScreen(
 }
 
 @Composable
-fun DefenseScreen(isRunning: Boolean, onShoot: (Int) -> Unit) {
+fun DefenseScreen(gameState: GameState, onShoot: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,7 +93,7 @@ fun DefenseScreen(isRunning: Boolean, onShoot: (Int) -> Unit) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         for (i in 1..5) {
-            DrawCannon(isRunning, i, onShoot, modifier = Modifier.weight(1f))
+            DrawCannon((gameState == GameState.GameIsRunning), i, onShoot, modifier = Modifier.weight(1f))
         }
     }
 }

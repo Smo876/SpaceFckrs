@@ -40,7 +40,6 @@ class SpaceViewModel() : ViewModel() {
     private val _score: MutableIntState = mutableIntStateOf(0)
     val score = _score.asIntState()
 
-
     init {
         reset()
         gameState = aliens.map {
@@ -167,6 +166,10 @@ class SpaceViewModel() : ViewModel() {
         }
         _score.intValue = 0
         reset()
+    }
+
+    fun canCannonsShoot(): Boolean {
+        return gameState.value == GameState.GameIsRunning && !_aniExpIsPlaying.value
     }
 }
 

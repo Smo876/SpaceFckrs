@@ -26,7 +26,6 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import de.mlex.spacefckrs.GameState
 import de.mlex.spacefckrs.R
 import de.mlex.spacefckrs.SpaceViewModel
 import de.mlex.spacefckrs.data.Alien
@@ -53,7 +52,7 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         AttackerScreen(viewModel.aliens.collectAsState(), aniExplosion, aniExpProgress)
-        DefenseScreen(viewModel.gameState.collectAsState().value) { viewModel.determineDamageAndExplode(it) }
+        DefenseScreen(viewModel.canCannonsShoot()) { viewModel.determineDamageAndExplode(it) }
         //if (gameState == GameState.GameIsRunning) DefenseScreen(true) { viewModel.determineDamageAndExplode(it) }
     }
 }
@@ -76,7 +75,11 @@ fun AttackerScreen(
                 is JustSpace -> Spacer(Modifier.size(90.dp))
                 is JustScrap -> {
                     if (aniExpProgress != 1f) {
-                        LottieAnimation(modifier = Modifier.padding(top=16.dp),composition = aniExplosion, progress = { aniExpProgress })
+                        LottieAnimation(modifier = Modifier
+                            .size(90.dp)
+                            .padding(top = 12.dp),
+                            composition = aniExplosion,
+                            progress = { aniExpProgress })
                     }
                 }
             }
@@ -85,7 +88,7 @@ fun AttackerScreen(
 }
 
 @Composable
-fun DefenseScreen(gameState: GameState, onShoot: (Int) -> Unit) {
+fun DefenseScreen(canShoot: Boolean, onShoot: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,7 +96,7 @@ fun DefenseScreen(gameState: GameState, onShoot: (Int) -> Unit) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         for (i in 1..5) {
-            DrawCannon((gameState == GameState.GameIsRunning), i, onShoot, modifier = Modifier.weight(1f))
+            DrawCannon(canShoot, i, onShoot, modifier = Modifier.weight(1f))
         }
     }
 }

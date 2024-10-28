@@ -113,7 +113,6 @@ fun Modifier.bottomBarBorder(strokeWidth: Dp, color: Color) = composed(
         Modifier.drawBehind {
             val width = size.width
             val height = 0f
-
             drawLine(
                 color = color,
                 start = Offset(x = 0f, y = height),

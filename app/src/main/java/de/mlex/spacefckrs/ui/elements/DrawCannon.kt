@@ -16,21 +16,29 @@ fun DrawCannon(
     cannonState: CannonState,
     cannon: Int,
     onShoot: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    painterResource: Int = when (cannonState) {
+        CannonState.IsReady -> R.drawable.sf_cannon
+        CannonState.WasDestroyed -> R.drawable.sf_destroyed_cannon
+        else -> {
+            if ((cannonState == CannonState.A_IsFiring && cannon == 1)
+                || (cannonState == CannonState.B_IsFiring && cannon == 2)
+                || (cannonState == CannonState.C_IsFiring && cannon == 3)
+                || (cannonState == CannonState.D_IsFiring && cannon == 4)
+                || (cannonState == CannonState.E_IsFiring && cannon == 5)
+            )
+                R.drawable.sf_firing_cannon
+            else R.drawable.sf_cannon
+        }
+    }
 ) {
     IconButton(
         modifier = modifier,
-        enabled = ( cannonState == CannonState.IsReady),
+        enabled = (cannonState == CannonState.IsReady),
         onClick = { onShoot(cannon) }) {
         Image(
             contentDescription = "Cannon",
-            painter = painterResource(
-                id = when (cannonState) {
-                    CannonState.WasDestroyed -> R.drawable.sf_destroyedcannon
-                    CannonState.IsFiring -> R.drawable.sf_firingcannon
-                    else -> R.drawable.sf_cannon
-                }
-            ),
+            painter = painterResource(painterResource),
             contentScale = ContentScale.Fit,
             alpha = 3.0f,
             modifier = Modifier

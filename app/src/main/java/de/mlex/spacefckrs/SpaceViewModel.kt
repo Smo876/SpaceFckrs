@@ -22,7 +22,7 @@ enum class GameState {
 }
 
 enum class CannonState {
-    IsReady, IsFiring, WasDestroyed
+    IsReady, WasDestroyed, A_IsFiring, B_IsFiring, C_IsFiring, D_IsFiring, E_IsFiring
 }
 
 
@@ -54,9 +54,8 @@ class SpaceViewModel() : ViewModel() {
             if (it.size > 25) {
                 _cannonState.value = CannonState.WasDestroyed
                 GameState.GameOver
-            }
-            else GameState.GameIsRunning
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning,)
+            } else GameState.GameIsRunning
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning)
         _viewModelIsReady.value = true
     }
 
@@ -118,8 +117,19 @@ class SpaceViewModel() : ViewModel() {
         if (hasChanged) {
             _aliens.tryEmit(newList)
             _aniExpIsPlaying.value = true
-            _cannonState.value = CannonState.IsFiring
+            _cannonState.value = whoIsFiring(cannon)
         } else cleanUp()
+    }
+
+    private fun whoIsFiring(cannon: Int): CannonState {
+        return when (cannon) {
+            1 -> CannonState.A_IsFiring
+            2 -> CannonState.B_IsFiring
+            3 -> CannonState.C_IsFiring
+            4 -> CannonState.D_IsFiring
+            5 -> CannonState.E_IsFiring
+            else -> CannonState.IsReady
+        }
     }
 
     fun cleanUp() {

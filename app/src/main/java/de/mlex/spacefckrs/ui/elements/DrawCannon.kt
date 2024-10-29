@@ -8,22 +8,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import de.mlex.spacefckrs.CannonState
 import de.mlex.spacefckrs.R
 
 @Composable
 fun DrawCannon(
-    isRunning: Boolean,
+    cannonState: CannonState,
     cannon: Int,
     onShoot: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     IconButton(
         modifier = modifier,
-        enabled = isRunning,
+        enabled = ( cannonState == CannonState.IsReady),
         onClick = { onShoot(cannon) }) {
         Image(
             contentDescription = "Cannon",
-            painter = painterResource(R.drawable.sf_cannon),
+            painter = painterResource(
+                id = when (cannonState) {
+                    CannonState.WasDestroyed -> R.drawable.sf_destroyedcannon
+                    CannonState.IsFiring -> R.drawable.sf_firingcannon
+                    else -> R.drawable.sf_cannon
+                }
+            ),
             contentScale = ContentScale.Fit,
             alpha = 3.0f,
             modifier = Modifier

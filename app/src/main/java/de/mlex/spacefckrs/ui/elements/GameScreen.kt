@@ -1,5 +1,6 @@
 package de.mlex.spacefckrs.ui.elements
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import de.mlex.spacefckrs.CannonState
 import de.mlex.spacefckrs.R
 import de.mlex.spacefckrs.SpaceViewModel
 import de.mlex.spacefckrs.data.Alien
@@ -33,6 +35,7 @@ import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues) {
     val aniExplosion by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.explosion))
@@ -52,7 +55,7 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         AttackerScreen(viewModel.aliens.collectAsState(), aniExplosion, aniExpProgress)
-        DefenseScreen(viewModel.canCannonsShoot()) { viewModel.determineDamageAndExplode(it) }
+        DefenseScreen(viewModel.cannonState.value) { viewModel.determineDamageAndExplode(it) }
         //if (gameState == GameState.GameIsRunning) DefenseScreen(true) { viewModel.determineDamageAndExplode(it) }
     }
 }
@@ -88,7 +91,7 @@ fun AttackerScreen(
 }
 
 @Composable
-fun DefenseScreen(canShoot: Boolean, onShoot: (Int) -> Unit) {
+fun DefenseScreen(cannonState: CannonState, onShoot: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,7 +99,7 @@ fun DefenseScreen(canShoot: Boolean, onShoot: (Int) -> Unit) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         for (i in 1..5) {
-            DrawCannon(canShoot, i, onShoot, modifier = Modifier.weight(1f))
+            DrawCannon(cannonState, i, onShoot, modifier = Modifier.weight(1f))
         }
     }
 }

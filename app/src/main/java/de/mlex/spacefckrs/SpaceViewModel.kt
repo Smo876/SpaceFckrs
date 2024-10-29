@@ -21,9 +21,17 @@ enum class GameState {
     GameOver, GameIsRunning
 }
 
+enum class CannonState {
+    IsReady, IsFiring, WasDestroyed
+}
+
+
 class SpaceViewModel() : ViewModel() {
 
     val gameState: StateFlow<GameState>
+
+    private val _cannonState = MutableStateFlow(CannonState.IsReady)
+    val cannonState = _cannonState.asStateFlow()
 
     private val _aniExpIsPlaying = MutableStateFlow(false)
     val aniExpIsPlaying = _aniExpIsPlaying.asStateFlow()
@@ -43,13 +51,17 @@ class SpaceViewModel() : ViewModel() {
     init {
         reset()
         gameState = aliens.map {
-            if (it.size > 25) GameState.GameOver
+            if (it.size > 25) {
+                _cannonState.value = CannonState.WasDestroyed
+                GameState.GameOver
+            }
             else GameState.GameIsRunning
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning)
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning,)
         _viewModelIsReady.value = true
     }
 
     private fun reset() {
+        _cannonState.value = CannonState.IsReady
         createNewRowOfAliens()
         getNextDamage()
     }
@@ -106,11 +118,13 @@ class SpaceViewModel() : ViewModel() {
         if (hasChanged) {
             _aliens.tryEmit(newList)
             _aniExpIsPlaying.value = true
+            _cannonState.value = CannonState.IsFiring
         } else cleanUp()
     }
 
     fun cleanUp() {
         _aniExpIsPlaying.value = false
+        _cannonState.value = CannonState.IsReady
         cleanUpScraps()
         cleanEmptyRows()
         reset()
@@ -168,8 +182,8 @@ class SpaceViewModel() : ViewModel() {
         reset()
     }
 
-    fun canCannonsShoot(): Boolean {
-        return gameState.value == GameState.GameIsRunning && !_aniExpIsPlaying.value
-    }
+//    fun canCannonsShoot(): Boolean {
+//        return gameState.value == GameState.GameIsRunning && !_aniExpIsPlaying.value
+//    }
 }
 

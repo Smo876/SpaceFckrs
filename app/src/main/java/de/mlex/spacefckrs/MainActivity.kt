@@ -8,7 +8,7 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -76,7 +76,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition")
+@SuppressLint(
+    "UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition",
+    "UnusedBoxWithConstraintsScope"
+)
 @Composable
 fun ScreenSpaceFckrs(viewModel: SpaceViewModel, spacePreference: Preference) {
     val highscore = remember { mutableIntStateOf(spacePreference.getHighScore()) }
@@ -87,8 +90,9 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel, spacePreference: Preference) {
         Scaffold(
             topBar = { TopBar(viewModel.score.intValue, highscore.intValue) },
             content = { padding ->
-                Box() {
-                    GameScreen(viewModel, padding)
+                BoxWithConstraints() {
+
+                    GameScreen(viewModel, padding, maxHeight)
                     val gameState by viewModel.gameState.collectAsState()
                     if (gameState == GameState.GameOver) {
                         GameOverBox()
@@ -107,5 +111,3 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel, spacePreference: Preference) {
         )
     }
 }
-
-// Fragen an Franz: Game an Bildschirmgröße anpassen

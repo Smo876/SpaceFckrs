@@ -1,13 +1,11 @@
 package de.mlex.spacefckrs.ui.elements
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import de.mlex.spacefckrs.CannonState
 import de.mlex.spacefckrs.R
 
@@ -19,15 +17,15 @@ fun DrawCannon(
     modifier: Modifier = Modifier,
     painterResource: Int = when (cannonState) {
         CannonState.IsReady -> R.drawable.sf_cannon
-        CannonState.WasDestroyed -> R.drawable.sf_destroyed_cannon
+        CannonState.WasDestroyed -> R.drawable.sf_destroyedcannon
         else -> {
-            if ((cannonState == CannonState.A_IsFiring && cannon == 1)
-                || (cannonState == CannonState.B_IsFiring && cannon == 2)
-                || (cannonState == CannonState.C_IsFiring && cannon == 3)
-                || (cannonState == CannonState.D_IsFiring && cannon == 4)
-                || (cannonState == CannonState.E_IsFiring && cannon == 5)
+            if ((cannonState == CannonState.AIsFiring && cannon == 1)
+                || (cannonState == CannonState.BIsFiring && cannon == 2)
+                || (cannonState == CannonState.CIsFiring && cannon == 3)
+                || (cannonState == CannonState.DIsFiring && cannon == 4)
+                || (cannonState == CannonState.EIsFiring && cannon == 5)
             )
-                R.drawable.sf_firing_cannon
+                R.drawable.sf_firingcannon
             else R.drawable.sf_cannon
         }
     }
@@ -40,9 +38,7 @@ fun DrawCannon(
             contentDescription = "Cannon",
             painter = painterResource(painterResource),
             contentScale = ContentScale.Fit,
-            alpha = 3.0f,
-            modifier = Modifier
-                .size(180.dp)
+            alpha = 1.0f,
         )
     }
 }

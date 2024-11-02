@@ -22,7 +22,7 @@ enum class GameState {
 }
 
 enum class CannonState {
-    IsReady, WasDestroyed, A_IsFiring, B_IsFiring, C_IsFiring, D_IsFiring, E_IsFiring
+    IsReady, WasDestroyed, AIsFiring, BIsFiring, CIsFiring, DIsFiring, EIsFiring
 }
 
 
@@ -49,9 +49,10 @@ class SpaceViewModel() : ViewModel() {
     val score = _score.asIntState()
 
     init {
+
         reset()
         gameState = aliens.map {
-            if (it.size > 25) {
+            if (it.size > 30) {
                 _cannonState.value = CannonState.WasDestroyed
                 GameState.GameOver
             } else GameState.GameIsRunning
@@ -123,11 +124,11 @@ class SpaceViewModel() : ViewModel() {
 
     private fun whoIsFiring(cannon: Int): CannonState {
         return when (cannon) {
-            1 -> CannonState.A_IsFiring
-            2 -> CannonState.B_IsFiring
-            3 -> CannonState.C_IsFiring
-            4 -> CannonState.D_IsFiring
-            5 -> CannonState.E_IsFiring
+            1 -> CannonState.AIsFiring
+            2 -> CannonState.BIsFiring
+            3 -> CannonState.CIsFiring
+            4 -> CannonState.DIsFiring
+            5 -> CannonState.EIsFiring
             else -> CannonState.IsReady
         }
     }

@@ -1,14 +1,16 @@
 package de.mlex.spacefckrs
 
+import android.app.Application
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.asIntState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import de.mlex.spacefckrs.data.Alien
 import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
+import de.mlex.spacefckrs.soundfx.AndroidAudioPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +28,7 @@ enum class CannonState {
 }
 
 
-class SpaceViewModel() : ViewModel() {
+class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
 
     val gameState: StateFlow<GameState>
 
@@ -48,6 +50,11 @@ class SpaceViewModel() : ViewModel() {
     private val _score: MutableIntState = mutableIntStateOf(0)
     val score = _score.asIntState()
 
+    private var justOneShotSound = false
+
+    private val audioPlayer by lazy {
+        AndroidAudioPlayer(appContext)
+    }
 
     init {
 
@@ -98,6 +105,10 @@ class SpaceViewModel() : ViewModel() {
             .reversed()
             .mapIndexed { index, field ->
                 if (field is Alien && index % 5 == 5 - cannon) {
+                    if (!justOneShotSound) {
+                        audioPlayer.playFile(R.raw.piu)
+                        justOneShotSound = true
+                    }
                     if (remainingDamage > 0) {
                         if (field.life >= remainingDamage) {
                             field.life -= remainingDamage
@@ -111,11 +122,11 @@ class SpaceViewModel() : ViewModel() {
                     }
                     if (field.life == 0) {
                         hasChanged = true
+                        audioPlayer.playFile(R.raw.brrr)
                         JustScrap()
                     } else field
                 } else field
             }.reversed()
-
         if (hasChanged) {
             _aliens.tryEmit(newList)
             _aniExpIsPlaying.value = true
@@ -137,6 +148,8 @@ class SpaceViewModel() : ViewModel() {
     fun cleanUp() {
         _aniExpIsPlaying.value = false
         _cannonState.value = CannonState.IsReady
+        audioPlayer.stopPlaying()
+        justOneShotSound = false
         cleanUpScraps()
         cleanEmptyRows()
         reset()
@@ -193,9 +206,5 @@ class SpaceViewModel() : ViewModel() {
         _score.intValue = 0
         reset()
     }
-
-//    fun canCannonsShoot(): Boolean {
-//        return gameState.value == GameState.GameIsRunning && !_aniExpIsPlaying.value
-//    }
 }
 

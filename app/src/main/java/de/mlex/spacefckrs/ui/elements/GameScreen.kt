@@ -35,7 +35,6 @@ import de.mlex.spacefckrs.data.Alien
 import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
-import de.mlex.spacefckrs.soundfx.AndroidAudioPlayer
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -43,7 +42,6 @@ fun GameScreen(
     viewModel: SpaceViewModel,
     padding: PaddingValues,
     maxHeight: Dp,
-    audioPlayer: AndroidAudioPlayer
 ) {
     val figureHeight = maxHeight / 8
     val aniExplosion by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.explosion))
@@ -53,10 +51,8 @@ fun GameScreen(
     )
 
     LaunchedEffect(key1 = aniExpProgress) {
-        audioPlayer.playFile(R.raw.brrr)
         if (aniExpProgress == 1f) {
             viewModel.cleanUp()
-            audioPlayer.stopPlaying()
         }
     }
     Column(
@@ -74,8 +70,7 @@ fun GameScreen(
         )
         DefenseScreen(
             viewModel.cannonState.value,
-            figureHeight,
-            audioPlayer
+            figureHeight
         ) { viewModel.determineDamageAndExplode(it) }
     }
 }
@@ -115,7 +110,6 @@ fun AttackerScreen(
 fun DefenseScreen(
     cannonState: CannonState,
     figureHeight: Dp,
-    audioPlayer: AndroidAudioPlayer,
     onShoot: (Int) -> Unit
 ) {
     Row(
@@ -126,7 +120,7 @@ fun DefenseScreen(
     ) {
         for (i in 1..5) {
             DrawCannon(
-                cannonState, i, audioPlayer, onShoot, modifier = Modifier
+                cannonState, i, onShoot, modifier = Modifier
                     .size(figureHeight)
                     .weight(1f)
             )

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import de.mlex.spacefckrs.data.Preference
+import de.mlex.spacefckrs.soundfx.AndroidAudioPlayer
 import de.mlex.spacefckrs.ui.elements.BottomBar
 import de.mlex.spacefckrs.ui.elements.GameOverBox
 import de.mlex.spacefckrs.ui.elements.GameScreen
@@ -28,6 +29,10 @@ import de.mlex.spacefckrs.ui.elements.TopBar
 import de.mlex.spacefckrs.ui.theme.SpaceFckrsTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val audioPlayer by lazy {
+        AndroidAudioPlayer(applicationContext)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val spacePreference = Preference(this)
@@ -68,8 +73,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpaceFckrsTheme {
                 // A surface container using the 'background' color from the theme
-                //LocalContext.current.  <- zum Messen der Bildschirmgrößte
-                ScreenSpaceFckrs(viewModel, spacePreference)
+                ScreenSpaceFckrs(viewModel, spacePreference, audioPlayer)
 
             }
         }
@@ -81,7 +85,11 @@ class MainActivity : ComponentActivity() {
     "UnusedBoxWithConstraintsScope"
 )
 @Composable
-fun ScreenSpaceFckrs(viewModel: SpaceViewModel, spacePreference: Preference) {
+fun ScreenSpaceFckrs(
+    viewModel: SpaceViewModel,
+    spacePreference: Preference,
+    audioPlayer: AndroidAudioPlayer
+) {
     val highscore = remember { mutableIntStateOf(spacePreference.getHighScore()) }
     Surface(
         modifier = Modifier
@@ -91,8 +99,7 @@ fun ScreenSpaceFckrs(viewModel: SpaceViewModel, spacePreference: Preference) {
             topBar = { TopBar(viewModel.score.intValue, highscore.intValue) },
             content = { padding ->
                 BoxWithConstraints() {
-
-                    GameScreen(viewModel, padding, maxHeight)
+                    GameScreen(viewModel, padding, maxHeight, audioPlayer)
                     val gameState by viewModel.gameState.collectAsState()
                     if (gameState == GameState.GameOver) {
                         GameOverBox()

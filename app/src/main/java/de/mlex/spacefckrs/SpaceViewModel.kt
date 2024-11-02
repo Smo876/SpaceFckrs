@@ -48,6 +48,7 @@ class SpaceViewModel() : ViewModel() {
     private val _score: MutableIntState = mutableIntStateOf(0)
     val score = _score.asIntState()
 
+
     init {
 
         reset()

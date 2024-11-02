@@ -8,11 +8,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import de.mlex.spacefckrs.CannonState
 import de.mlex.spacefckrs.R
+import de.mlex.spacefckrs.soundfx.AndroidAudioPlayer
 
 @Composable
 fun DrawCannon(
     cannonState: CannonState,
     cannon: Int,
+    audioPlayer: AndroidAudioPlayer,
     onShoot: (Int) -> Unit,
     modifier: Modifier = Modifier,
     painterResource: Int = when (cannonState) {
@@ -33,7 +35,10 @@ fun DrawCannon(
     IconButton(
         modifier = modifier,
         enabled = (cannonState == CannonState.IsReady),
-        onClick = { onShoot(cannon) }) {
+        onClick = {
+            onShoot(cannon)
+            audioPlayer.playFile(R.raw.piu)
+        }) {
         Image(
             contentDescription = "Cannon",
             painter = painterResource(painterResource),

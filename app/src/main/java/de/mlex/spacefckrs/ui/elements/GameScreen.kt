@@ -35,10 +35,16 @@ import de.mlex.spacefckrs.data.Alien
 import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
+import de.mlex.spacefckrs.soundfx.AndroidAudioPlayer
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, maxHeight: Dp) {
+fun GameScreen(
+    viewModel: SpaceViewModel,
+    padding: PaddingValues,
+    maxHeight: Dp,
+    audioPlayer: AndroidAudioPlayer
+) {
     val figureHeight = maxHeight / 8
     val aniExplosion by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.explosion))
     val aniExpProgress by animateLottieCompositionAsState(
@@ -47,7 +53,11 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, maxHeight: Dp)
     )
 
     LaunchedEffect(key1 = aniExpProgress) {
-        if (aniExpProgress == 1f) viewModel.cleanUp()
+        audioPlayer.playFile(R.raw.brrr)
+        if (aniExpProgress == 1f) {
+            viewModel.cleanUp()
+            audioPlayer.stopPlaying()
+        }
     }
     Column(
         modifier = Modifier
@@ -64,7 +74,8 @@ fun GameScreen(viewModel: SpaceViewModel, padding: PaddingValues, maxHeight: Dp)
         )
         DefenseScreen(
             viewModel.cannonState.value,
-            figureHeight
+            figureHeight,
+            audioPlayer
         ) { viewModel.determineDamageAndExplode(it) }
     }
 }
@@ -101,7 +112,12 @@ fun AttackerScreen(
 }
 
 @Composable
-fun DefenseScreen(cannonState: CannonState, figureHeight: Dp, onShoot: (Int) -> Unit) {
+fun DefenseScreen(
+    cannonState: CannonState,
+    figureHeight: Dp,
+    audioPlayer: AndroidAudioPlayer,
+    onShoot: (Int) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,9 +125,11 @@ fun DefenseScreen(cannonState: CannonState, figureHeight: Dp, onShoot: (Int) -> 
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         for (i in 1..5) {
-            DrawCannon(cannonState, i, onShoot, modifier = Modifier
-                .size(figureHeight)
-                .weight(1f))
+            DrawCannon(
+                cannonState, i, audioPlayer, onShoot, modifier = Modifier
+                    .size(figureHeight)
+                    .weight(1f)
+            )
         }
     }
 }

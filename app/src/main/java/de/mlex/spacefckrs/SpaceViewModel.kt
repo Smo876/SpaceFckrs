@@ -50,6 +50,8 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     private val _score: MutableIntState = mutableIntStateOf(0)
     val score = _score.asIntState()
 
+    private val _soundIsOn = MutableStateFlow(false)
+
     private var justOneShotSound = false
 
     private val audioPlayer by lazy {
@@ -57,7 +59,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     }
 
     init {
-
         reset()
         gameState = aliens.map {
             if (it.size > 30) {
@@ -66,6 +67,10 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
             } else GameState.GameIsRunning
         }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning)
         _viewModelIsReady.value = true
+    }
+
+    fun setSound(soundIsOn: Boolean) {
+        _soundIsOn.value = soundIsOn
     }
 
     private fun reset() {
@@ -105,7 +110,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
             .reversed()
             .mapIndexed { index, field ->
                 if (field is Alien && index % 5 == 5 - cannon) {
-                    if (!justOneShotSound) {
+                    if (!justOneShotSound && _soundIsOn.value) {
                         audioPlayer.playFile(R.raw.piu)
                         justOneShotSound = true
                     }
@@ -122,7 +127,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
                     }
                     if (field.life == 0) {
                         hasChanged = true
-                        audioPlayer.playFile(R.raw.brrr)
+                        if (_soundIsOn.value) audioPlayer.playFile(R.raw.brrr)
                         JustScrap()
                     } else field
                 } else field
@@ -148,7 +153,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     fun cleanUp() {
         _aniExpIsPlaying.value = false
         _cannonState.value = CannonState.IsReady
-        audioPlayer.stopPlaying()
+        if (_soundIsOn.value) audioPlayer.stopPlaying()
         justOneShotSound = false
         cleanUpScraps()
         cleanEmptyRows()

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val spacePreference = Preference(this)
         val viewModel by viewModels<SpaceViewModel>()
+        viewModel.setSound(spacePreference.getSound())
 
         super.onCreate(savedInstanceState)
 
@@ -86,6 +88,8 @@ fun ScreenSpaceFckrs(
     spacePreference: Preference
 ) {
     val highscore = remember { mutableIntStateOf(spacePreference.getHighScore()) }
+    val soundOn = remember { mutableStateOf(spacePreference.getSound()) }
+
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -102,13 +106,21 @@ fun ScreenSpaceFckrs(
                 }
             },
             bottomBar = {
-                BottomBar(viewModel.nextDamage.intValue) {
-                    if (viewModel.score.intValue > highscore.intValue) {
-                        highscore.intValue = viewModel.score.intValue
-                        spacePreference.setHighScore(viewModel.score.intValue)
+                BottomBar(
+                    viewModel.nextDamage.intValue, soundOn.value,
+                    resetGame = {
+                        if (viewModel.score.intValue > highscore.intValue) {
+                            highscore.intValue = viewModel.score.intValue
+                            spacePreference.setHighScore(viewModel.score.intValue)
+                        }
+                        viewModel.resetGame()
+                    },
+                    switchSoundSetting = {
+                        soundOn.value = !soundOn.value
+                        viewModel.setSound(soundOn.value)
+                        spacePreference.setSound(soundOn.value)
                     }
-                    viewModel.resetGame()
-                }
+                )
             },
         )
     }

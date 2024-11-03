@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -32,12 +33,18 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.mlex.spacefckrs.R
 import de.mlex.spacefckrs.ui.theme.backgroundDark
 import de.mlex.spacefckrs.ui.theme.onPrimaryContainerDark
 import kotlinx.coroutines.launch
 
 @Composable
-fun BottomBar(nextDamage: Int, resetGame: () -> Unit) {
+fun BottomBar(
+    nextDamage: Int,
+    soundOn: Boolean,
+    resetGame: () -> Unit,
+    switchSoundSetting: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -52,7 +59,6 @@ fun BottomBar(nextDamage: Int, resetGame: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
 
         ) {
-
             Text(
                 buildAnnotatedString {
                     withStyle(
@@ -75,31 +81,56 @@ fun BottomBar(nextDamage: Int, resetGame: () -> Unit) {
                     }
                 })
 
-            val degree = remember { Animatable(0f) }
-            val scope1 = rememberCoroutineScope()
-            val scope2 = rememberCoroutineScope()
-            IconButton(onClick = {
-                scope1.launch { degree.stop() }
-                scope2.launch {
-                    if (degree.value != 0f) degree.snapTo(0f)
-                    degree.animateTo(
-                        360f,
-                        SpringSpec(
-                            dampingRatio = 0.75f,
-                            stiffness = 100f,
+            Row() {
+
+                if (soundOn) {
+                    IconButton(onClick = { switchSoundSetting() }) {
+                        Icon(
+                            painterResource(R.drawable.baseline_music_note_24),
+                            contentDescription = "sound",
+                            modifier = Modifier
+                                .size(30.dp),
+                            tint = Color.LightGray
                         )
+                    }
+                } else {
+                    IconButton(onClick = { switchSoundSetting() }) {
+                        Icon(
+                            painterResource(R.drawable.outline_music_note_24),
+                            contentDescription = "sound",
+                            modifier = Modifier
+                                .size(30.dp),
+                            tint = Color.LightGray
+                        )
+                    }
+                }
+
+                val degree = remember { Animatable(0f) }
+                val scope1 = rememberCoroutineScope()
+                val scope2 = rememberCoroutineScope()
+                IconButton(onClick = {
+                    scope1.launch { degree.stop() }
+                    scope2.launch {
+                        if (degree.value != 0f) degree.snapTo(0f)
+                        degree.animateTo(
+                            360f,
+                            SpringSpec(
+                                dampingRatio = 0.75f,
+                                stiffness = 100f,
+                            )
+                        )
+                    }
+                    resetGame()
+                }) {
+                    Icon(
+                        Icons.Filled.Refresh,
+                        contentDescription = "refresh",
+                        modifier = Modifier
+                            .rotate(degree.value)
+                            .size(30.dp),
+                        tint = Color.LightGray
                     )
                 }
-                resetGame()
-            }) {
-                Icon(
-                    Icons.Filled.Refresh,
-                    contentDescription = "menu",
-                    modifier = Modifier
-                        .rotate(degree.value)
-                        .size(30.dp),
-                    tint = Color.LightGray
-                )
             }
         }
     }

@@ -24,7 +24,7 @@ enum class GameState {
 }
 
 enum class CannonState {
-    IsReady, WasDestroyed, AIsFiring, BIsFiring, CIsFiring, DIsFiring, EIsFiring
+    IsReady, WasDestroyed
 }
 
 
@@ -135,19 +135,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         if (hasChanged) {
             _aliens.tryEmit(newList)
             _aniExpIsPlaying.value = true
-            _cannonState.value = whoIsFiring(cannon)
         } else cleanUp()
-    }
-
-    private fun whoIsFiring(cannon: Int): CannonState {
-        return when (cannon) {
-            1 -> CannonState.AIsFiring
-            2 -> CannonState.BIsFiring
-            3 -> CannonState.CIsFiring
-            4 -> CannonState.DIsFiring
-            5 -> CannonState.EIsFiring
-            else -> CannonState.IsReady
-        }
     }
 
     fun cleanUp() {

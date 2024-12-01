@@ -36,7 +36,9 @@ import androidx.compose.ui.unit.sp
 import de.mlex.spacefckrs.R
 import de.mlex.spacefckrs.ui.theme.backgroundDark
 import de.mlex.spacefckrs.ui.theme.onPrimaryContainerDark
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun BottomBar(
@@ -108,6 +110,7 @@ fun BottomBar(
                 val degree = remember { Animatable(0f) }
                 val scope1 = rememberCoroutineScope()
                 val scope2 = rememberCoroutineScope()
+                val scope3 = rememberCoroutineScope()
                 IconButton(onClick = {
                     scope1.launch { degree.stop() }
                     scope2.launch {
@@ -120,7 +123,11 @@ fun BottomBar(
                             )
                         )
                     }
-                    resetGame()
+                    scope3.launch {
+                        delay(0.5.seconds)
+                        resetGame()
+                    }
+
                 }) {
                     Icon(
                         Icons.Filled.Refresh,

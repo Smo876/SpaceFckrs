@@ -11,6 +11,7 @@ import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
 import de.mlex.spacefckrs.soundfx.AndroidAudioPlayer
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 enum class GameState {
     GameOver, GameIsRunning
@@ -127,14 +129,17 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
                     }
                     if (field.life == 0) {
                         hasChanged = true
-                        if (_soundIsOn.value) audioPlayer.playFile(R.raw.brrr)
                         JustScrap()
                     } else field
                 } else field
             }.reversed()
         if (hasChanged) {
-            _aliens.tryEmit(newList)
-            _aniExpIsPlaying.value = true
+            viewModelScope.launch {
+                delay(0.2.seconds)
+                if (_soundIsOn.value) audioPlayer.playFile(R.raw.brrr)
+                _aliens.tryEmit(newList)
+                _aniExpIsPlaying.value = true
+            }
         } else cleanUp()
     }
 

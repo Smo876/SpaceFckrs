@@ -8,7 +8,6 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -97,12 +96,10 @@ fun ScreenSpaceFckrs(
         Scaffold(
             topBar = { TopBar(viewModel.score.intValue, highscore.intValue) },
             content = { padding ->
-                BoxWithConstraints() {
-                    GameScreen(viewModel, padding, maxHeight)
-                    val gameState by viewModel.gameState.collectAsState()
-                    if (gameState == GameState.GameOver) {
-                        GameOverBox()
-                    }
+                GameScreen(viewModel, padding)
+                val gameState by viewModel.gameState.collectAsState()
+                if (gameState == GameState.GameOver) {
+                    GameOverBox()
                 }
             },
             bottomBar = {

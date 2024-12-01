@@ -1,6 +1,7 @@
 package de.mlex.spacefckrs.ui.elements
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -34,6 +35,7 @@ fun DrawCannon(
             coroutine.animateCannon(isShooting)
         }) {
         Image(
+            modifier = Modifier.fillMaxSize(),
             contentDescription = "Cannon",
             painter = painterResource(
                 when {

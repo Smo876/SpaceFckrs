@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import de.mlex.spacefckrs.ui.theme.errorContainerDark
 
 @Composable
-fun GameOverBox(score: Int) {
+fun GameOverBox(score: Int, newHighscore: Boolean) {
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -32,7 +32,8 @@ fun GameOverBox(score: Int) {
                 .fillMaxSize()
                 .background(color = Color.DarkGray.copy(alpha = .8f))
         )
-        val gradientColors = listOf(errorContainerDark, Color.Yellow)
+        val gradientColors1 = listOf(errorContainerDark, Color.Yellow)
+        val gradientColors2 = listOf(Color.Green, Color.Blue)
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -45,7 +46,7 @@ fun GameOverBox(score: Int) {
                 textAlign = TextAlign.Center,
                 style = TextStyle(
                     brush = Brush.linearGradient(
-                        colors = gradientColors
+                        colors = gradientColors1
                     )
                 )
             )
@@ -56,6 +57,20 @@ fun GameOverBox(score: Int) {
                 textAlign = TextAlign.Center,
 
                 )
+            if (newHighscore) {
+                Text(
+                    text = "NEW HIGHSCORE!",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        brush = Brush.linearGradient(
+                            colors = gradientColors2
+                        )
+                    )
+                )
+            }
         }
     }
 }

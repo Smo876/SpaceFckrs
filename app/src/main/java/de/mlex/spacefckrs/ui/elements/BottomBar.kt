@@ -84,7 +84,6 @@ fun BottomBar(
                 })
 
             Row() {
-
                 if (soundOn) {
                     IconButton(onClick = { switchSoundSetting() }) {
                         Icon(

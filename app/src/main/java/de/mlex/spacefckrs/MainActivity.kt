@@ -12,7 +12,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -72,7 +71,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SpaceFckrsTheme {
-                // A surface container using the 'background' color from the theme
                 ScreenSpaceFckrs(viewModel, spacePreference)
 
             }
@@ -91,40 +89,39 @@ fun ScreenSpaceFckrs(
 ) {
     val highscore = remember { mutableIntStateOf(spacePreference.getHighScore()) }
     val soundOn = remember { mutableStateOf(spacePreference.getSound()) }
+    val newHighscore = remember { mutableStateOf(false) }
 
-    Surface(
+    Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .safeDrawingPadding(),
-    ) {
-        Scaffold(
-            topBar = { TopBar(viewModel.score.intValue, highscore.intValue) },
-            content = { padding ->
-                GameScreen(viewModel, padding)
-                val gameState by viewModel.gameState.collectAsState()
-                if (gameState == GameState.GameOver) {
-                    GameOverBox(viewModel.score.intValue)
-                }
-            },
-            bottomBar = {
-                BottomBar(
-                    viewModel.nextDamage.intValue, soundOn.value,
-                    resetGame = {
-                        if (viewModel.score.intValue > highscore.intValue) {
-                            highscore.intValue = viewModel.score.intValue
-                            spacePreference.setHighScore(viewModel.score.intValue)
-                        }
-                        viewModel.resetGame()
-                    },
-                    switchSoundSetting = {
-                        soundOn.value = !soundOn.value
-                        viewModel.setSound(soundOn.value)
-                        spacePreference.setSound(soundOn.value)
+        topBar = { TopBar(viewModel.score.intValue, highscore.intValue) },
+        content = { padding ->
+            GameScreen(viewModel, padding)
+            val gameState by viewModel.gameState.collectAsState()
+            if (gameState == GameState.GameOver) {
+                newHighscore.value = viewModel.score.intValue > highscore.intValue
+                GameOverBox(viewModel.score.intValue, newHighscore.value)
+            }
+        },
+        bottomBar = {
+            BottomBar(
+                viewModel.nextDamage.intValue, soundOn.value,
+                resetGame = {
+                    if (viewModel.score.intValue > highscore.intValue) {
+                        highscore.intValue = viewModel.score.intValue
+                        spacePreference.setHighScore(viewModel.score.intValue)
                     }
-                )
-            },
-        )
-    }
+                    viewModel.resetGame()
+                },
+                switchSoundSetting = {
+                    soundOn.value = !soundOn.value
+                    viewModel.setSound(soundOn.value)
+                    spacePreference.setSound(soundOn.value)
+                }
+            )
+        },
+    )
 }
 
 //TODO: refactor sound on off and why is there no sound by shoot no enemy?

@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val lightScheme = lightColorScheme(
     primary = primaryDark,
@@ -78,6 +79,8 @@ private val darkScheme = darkColorScheme(
     )
 
 
+
+
 @Immutable
 data class ColorFamily(
     val color: Color,
@@ -89,6 +92,8 @@ data class ColorFamily(
 val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
+
+
 
 @Composable
 fun SpaceFckrsTheme(
@@ -106,6 +111,12 @@ fun SpaceFckrsTheme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
+    val systemUiController = rememberSystemUiController()
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+
 
     MaterialTheme(
         colorScheme = colorScheme,

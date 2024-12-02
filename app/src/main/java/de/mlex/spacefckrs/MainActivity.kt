@@ -103,7 +103,7 @@ fun ScreenSpaceFckrs(
                 GameScreen(viewModel, padding)
                 val gameState by viewModel.gameState.collectAsState()
                 if (gameState == GameState.GameOver) {
-                    GameOverBox()
+                    GameOverBox(viewModel.score.intValue)
                 }
             },
             bottomBar = {
@@ -127,4 +127,4 @@ fun ScreenSpaceFckrs(
     }
 }
 
-//TODO: refactor sound on off, bilder für schießende Kanone, Sound zeitiger und versetzt, gradle problems
+//TODO: refactor sound on off and why is there no sound by shoot no enemy?

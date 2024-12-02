@@ -2,8 +2,10 @@ package de.mlex.spacefckrs.ui.elements
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import de.mlex.spacefckrs.ui.theme.errorContainerDark
 
 @Composable
-fun GameOverBox() {
+fun GameOverBox(score: Int) {
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -31,17 +33,29 @@ fun GameOverBox() {
                 .background(color = Color.DarkGray.copy(alpha = .8f))
         )
         val gradientColors = listOf(errorContainerDark, Color.Yellow)
-        Text(
-            text = "GAME OVER",
-            fontSize = 50.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            textAlign = TextAlign.Center,
-            style = TextStyle(
-                brush = Brush.linearGradient(
-                    colors = gradientColors
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "GAME OVER",
+                fontSize = 50.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    brush = Brush.linearGradient(
+                        colors = gradientColors
+                    )
                 )
             )
-        )
+            Text(
+                text = "Score: $score",
+                fontSize = 30.sp,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+
+                )
+        }
     }
 }

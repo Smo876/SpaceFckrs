@@ -106,16 +106,17 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     }
 
     fun determineDamageAndExplode(cannon: Int) {
+        if (!justOneShotSound && _soundIsOn.value) {
+            audioPlayer.playFile(R.raw.piu)
+            justOneShotSound = true
+        }
         var remainingDamage = _nextDamage.intValue
         var hasChanged = false
         val newList = _aliens.value
             .reversed()
             .mapIndexed { index, field ->
                 if (field is Alien && index % 5 == 5 - cannon) {
-                    if (!justOneShotSound && _soundIsOn.value) {
-                        audioPlayer.playFile(R.raw.piu)
-                        justOneShotSound = true
-                    }
+
                     if (remainingDamage > 0) {
                         if (field.life >= remainingDamage) {
                             field.life -= remainingDamage

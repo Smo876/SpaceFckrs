@@ -7,8 +7,10 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -37,7 +39,8 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        //TODO: fullscreen Modus
+        enableEdgeToEdge()
+
         installSplashScreen().apply {
             setKeepOnScreenCondition {
                 !viewModel.viewModelIsReady.value
@@ -91,7 +94,8 @@ fun ScreenSpaceFckrs(
 
     Surface(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .safeDrawingPadding(),
     ) {
         Scaffold(
             topBar = { TopBar(viewModel.score.intValue, highscore.intValue) },

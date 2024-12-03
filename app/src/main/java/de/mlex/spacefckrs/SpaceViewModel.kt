@@ -26,7 +26,7 @@ enum class GameState {
 }
 
 enum class CannonState {
-    IsReady, WasDestroyed
+    IsReady, IsFiring, WasDestroyed
 }
 
 
@@ -76,9 +76,9 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     }
 
     private fun reset() {
-        _cannonState.value = CannonState.IsReady
         createNewRowOfAliens()
         getNextDamage()
+        _cannonState.value = CannonState.IsReady
     }
 
     private fun createNewRowOfAliens() {
@@ -110,6 +110,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
             audioPlayer.playFile(R.raw.piu)
             justOneShotSound = true
         }
+        _cannonState.value = CannonState.IsFiring
         var remainingDamage = _nextDamage.intValue
         var hasChanged = false
         val newList = _aliens.value
@@ -146,7 +147,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
 
     fun cleanUp() {
         _aniExpIsPlaying.value = false
-        _cannonState.value = CannonState.IsReady
         if (_soundIsOn.value) audioPlayer.stopPlaying()
         justOneShotSound = false
         cleanUpScraps()

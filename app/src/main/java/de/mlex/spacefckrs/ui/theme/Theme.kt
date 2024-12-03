@@ -1,5 +1,6 @@
 package de.mlex.spacefckrs.ui.theme
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -89,12 +90,9 @@ data class ColorFamily(
     val onColorContainer: Color
 )
 
-val unspecified_scheme = ColorFamily(
-    Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
-)
 
 
-
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun SpaceFckrsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

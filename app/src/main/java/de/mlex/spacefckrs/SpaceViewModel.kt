@@ -54,8 +54,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
 
     private val _soundIsOn = MutableStateFlow(false)
 
-    private var justOneShotSound = false
-
     private val audioPlayer by lazy {
         AndroidAudioPlayer(appContext)
     }
@@ -79,6 +77,10 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         createNewRowOfAliens()
         getNextDamage()
         _cannonState.value = CannonState.IsReady
+//        viewModelScope.launch {
+//            delay(0.5.seconds)
+//            if (_soundIsOn.value) audioPlayer.stopPlaying()
+//        }
     }
 
     private fun createNewRowOfAliens() {
@@ -106,10 +108,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     }
 
     fun determineDamageAndExplode(cannon: Int) {
-        if (!justOneShotSound && _soundIsOn.value) {
-            audioPlayer.playFile(R.raw.piu)
-            justOneShotSound = true
-        }
+        if (_soundIsOn.value) audioPlayer.playFile(R.raw.piu)
         _cannonState.value = CannonState.IsFiring
         var remainingDamage = _nextDamage.intValue
         var hasChanged = false
@@ -147,8 +146,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
 
     fun cleanUp() {
         _aniExpIsPlaying.value = false
-        if (_soundIsOn.value) audioPlayer.stopPlaying()
-        justOneShotSound = false
         cleanUpScraps()
         cleanEmptyRows()
         reset()
@@ -203,6 +200,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
             _aliens.emit(emptyList())
         }
         _score.intValue = 0
+        _cannonState.value = CannonState.IsReady
         reset()
     }
 }

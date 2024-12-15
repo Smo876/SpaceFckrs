@@ -37,9 +37,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     private val _cannonState = MutableStateFlow(CannonState.IsReady)
     val cannonState = _cannonState.asStateFlow()
 
-    private val _aniExpIsPlaying = MutableStateFlow(false)
-    val aniExpIsPlaying = _aniExpIsPlaying.asStateFlow()
-
     private val _viewModelIsReady = MutableStateFlow(false)
     val viewModelIsReady = _viewModelIsReady.asStateFlow()
 
@@ -53,6 +50,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     val score = _score.asIntState()
 
     private val _soundIsOn = MutableStateFlow(false)
+    val soundIsOn = _soundIsOn.asStateFlow()
 
     private val audioPlayer by lazy {
         AndroidAudioPlayer(appContext)
@@ -77,10 +75,8 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         createNewRowOfAliens()
         getNextDamage()
         _cannonState.value = CannonState.IsReady
-//        viewModelScope.launch {
-//            delay(0.5.seconds)
-//            if (_soundIsOn.value) audioPlayer.stopPlaying()
-//        }
+        //if (_soundIsOn.value) audioPlayer.stopPlaying()
+
     }
 
     private fun createNewRowOfAliens() {
@@ -108,7 +104,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     }
 
     fun determineDamageAndExplode(cannon: Int) {
-        if (_soundIsOn.value) audioPlayer.playFile(R.raw.piu)
         _cannonState.value = CannonState.IsFiring
         var remainingDamage = _nextDamage.intValue
         var hasChanged = false
@@ -116,7 +111,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
             .reversed()
             .mapIndexed { index, field ->
                 if (field is Alien && index % 5 == 5 - cannon) {
-
                     if (remainingDamage > 0) {
                         if (field.life >= remainingDamage) {
                             field.life -= remainingDamage
@@ -137,15 +131,12 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         if (hasChanged) {
             viewModelScope.launch {
                 delay(0.2.seconds)
-                if (_soundIsOn.value) audioPlayer.playFile(R.raw.brrr)
                 _aliens.tryEmit(newList)
-                _aniExpIsPlaying.value = true
             }
         } else cleanUp()
     }
 
     fun cleanUp() {
-        _aniExpIsPlaying.value = false
         cleanUpScraps()
         cleanEmptyRows()
         reset()
@@ -202,6 +193,14 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         _score.intValue = 0
         _cannonState.value = CannonState.IsReady
         reset()
+    }
+
+    fun playPiuSound() {
+        if (soundIsOn.value) audioPlayer.playFile(R.raw.piu)
+    }
+
+    fun playBrrrSound() {
+        if (soundIsOn.value) audioPlayer.playFile(R.raw.brrr)
     }
 }
 

@@ -17,26 +17,16 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.LottieComposition
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
-import de.mlex.spacefckrs.CannonState
-import de.mlex.spacefckrs.R
 import de.mlex.spacefckrs.SpaceViewModel
 import de.mlex.spacefckrs.data.Alien
 import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
-import de.mlex.spacefckrs.data.USO
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -44,17 +34,6 @@ fun GameScreen(
     viewModel: SpaceViewModel,
     padding: PaddingValues,
 ) {
-    val aniExplosion by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.explosion))
-    val aniExpProgress by animateLottieCompositionAsState(
-        composition = aniExplosion,
-        isPlaying = viewModel.aniExpIsPlaying.collectAsState().value
-    )
-
-    LaunchedEffect(key1 = aniExpProgress) {
-        if (aniExpProgress == 1f) {
-            viewModel.cleanUp()
-        }
-    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -63,16 +42,14 @@ fun GameScreen(
         contentAlignment = Alignment.BottomStart
     ) {
         DefenseScreen(
-            viewModel.cannonState.value,
+            viewModel,
             Modifier
                 .padding(bottom = 18.dp)
                 .height(50.dp)
         ) { viewModel.determineDamageAndExplode(it) }
 
         AttackerScreen(
-            viewModel.aliens.collectAsState(),
-            aniExplosion,
-            aniExpProgress,
+            viewModel,
             Modifier
                 .padding(bottom = 18.dp)
                 .fillMaxSize()
@@ -83,11 +60,10 @@ fun GameScreen(
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun AttackerScreen(
-    aliens: State<List<USO>>,
-    aniExplosion: LottieComposition?,
-    aniExpProgress: Float,
-    modifier: Modifier = Modifier
+    viewModel: SpaceViewModel,
+    modifier: Modifier = Modifier,
 ) {
+    val aliens by viewModel.aliens.collectAsState()
     BoxWithConstraints(
         modifier = modifier
             .padding(start = 24.dp, end = 24.dp)
@@ -98,19 +74,11 @@ fun AttackerScreen(
 
             columns = GridCells.Fixed(5),
         ) {
-            items(aliens.value) {
+            items(aliens) {
                 when (it) {
                     is Alien -> DrawAlien(it, modifier = Modifier.size(figureHeight))
                     is JustSpace -> Spacer(Modifier.size(figureHeight))
-                    is JustScrap -> {
-                        if (aniExpProgress != 1f) {
-                            LottieAnimation(modifier = Modifier
-                                .size(figureHeight)
-                                .padding(top = 12.dp),
-                                composition = aniExplosion,
-                                progress = { aniExpProgress })
-                        }
-                    }
+                    is JustScrap -> DrawAnimation(viewModel, figureHeight)
                 }
             }
         }
@@ -119,7 +87,7 @@ fun AttackerScreen(
 
 @Composable
 fun DefenseScreen(
-    cannonState: CannonState,
+    viewModel: SpaceViewModel,
     modifier: Modifier,
     onShoot: (Int) -> Unit
 ) {
@@ -131,7 +99,7 @@ fun DefenseScreen(
     ) {
         for (i in 1..5) {
             DrawCannon(
-                cannonState, i, onShoot, modifier = Modifier
+                viewModel, i, onShoot, modifier = Modifier
                     .fillMaxHeight()
                     .weight(1F)
             )

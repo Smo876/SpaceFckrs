@@ -1,22 +1,27 @@
 package de.mlex.spacefckrs.data
 
-//TODO: without these dates
+import java.util.UUID
+
 interface USO {
-    val id: Int
+    val id: UUID
 }
 
 data class Alien(
     val type: Int = 0,
     var life: Int = 0,
-    override val id: Int = 0
+    override val id: UUID = UUID.randomUUID()
+) : USO
+
+data class DestroyedOne(
+    override val id: UUID = UUID.randomUUID()
 ) : USO
 
 data class JustSpace(
-    override val id: Int = 0
+    override val id: UUID = UUID.randomUUID()
 ) : USO
 
 data class JustScrap(
-    override val id: Int = 0
+    override val id: UUID = UUID.randomUUID()
 ) : USO
 
 

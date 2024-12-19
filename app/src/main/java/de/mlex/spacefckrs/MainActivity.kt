@@ -106,7 +106,7 @@ fun ScreenSpaceFckrs(
         },
         bottomBar = {
             BottomBar(
-                viewModel.nextDamage.intValue, soundOn.value,
+                viewModel, soundOn.value,
                 resetGame = {
                     if (viewModel.score.intValue > highscore.intValue) {
                         highscore.intValue = viewModel.score.intValue
@@ -117,11 +117,10 @@ fun ScreenSpaceFckrs(
                 switchSoundSetting = {
                     soundOn.value = !soundOn.value
                     viewModel.setSound(soundOn.value)
+                    viewModel.playPiepSound()
                     spacePreference.setSound(soundOn.value)
                 }
             )
         },
     )
 }
-
-//TODO: refactor sound on off and why is there no sound by shoot no enemy?

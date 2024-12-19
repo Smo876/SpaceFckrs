@@ -13,7 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import de.mlex.spacefckrs.CannonState
+import de.mlex.spacefckrs.GameState
 import de.mlex.spacefckrs.R
 import de.mlex.spacefckrs.SpaceViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -25,25 +25,24 @@ import kotlin.time.Duration.Companion.seconds
 fun DrawCannon(
     viewModel: SpaceViewModel,
     cannon: Int,
-    onShoot: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isShooting = remember { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
-    val cannonState by viewModel.cannonState.collectAsState()
+    val gameState by viewModel.gameState.collectAsState()
     IconButton(
         modifier = modifier,
-        enabled = (cannonState == CannonState.IsReady),
+        enabled = (gameState == GameState.WaitingForPlayer),
         onClick = {
-            onShoot(cannon)
-            coroutine.animateCannon(isShooting, viewModel)
+            viewModel.onShot()
+            coroutine.animateCannon(isShooting, viewModel, cannon)
         }) {
         Image(
             modifier = Modifier.fillMaxSize(),
             contentDescription = "Cannon",
             painter = painterResource(
                 when {
-                    cannonState == CannonState.WasDestroyed -> R.drawable.sf_destroyedcannon
+                    gameState == GameState.GameOver -> R.drawable.sf_destroyedcannon
                     isShooting.value -> R.drawable.sf_firingcannon
                     else -> R.drawable.sf_cannon
                 }
@@ -56,12 +55,14 @@ fun DrawCannon(
 
 private fun CoroutineScope.animateCannon(
     isShooting: MutableState<Boolean>,
-    viewModel: SpaceViewModel
+    viewModel: SpaceViewModel,
+    cannon: Int
 ) {
     isShooting.value = true
     launch {
         viewModel.playPiuSound()
-        delay(0.5.seconds)
+        delay(0.4.seconds)
+        viewModel.afterShot(cannon)
         isShooting.value = false
     }
 }

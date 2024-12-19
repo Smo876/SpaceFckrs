@@ -61,7 +61,7 @@ private fun CoroutineScope.animateCannon(
     isShooting.value = true
     launch {
         viewModel.playPiuSound()
-        delay(0.4.seconds)
+        delay(0.3.seconds)
         viewModel.afterShot(cannon)
         isShooting.value = false
     }

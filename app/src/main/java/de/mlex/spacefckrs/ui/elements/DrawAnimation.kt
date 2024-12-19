@@ -34,11 +34,11 @@ fun DrawAnimation(viewModel: SpaceViewModel, figureHeight: Dp) {
         viewModel.playBrrrSound()
     }
 
-    if (aniExpProgress != 1f) {
+//    if (aniExpProgress != 1f) {
         LottieAnimation(modifier = Modifier
             .size(figureHeight)
             .padding(top = 12.dp),
             composition = aniExplosion,
             progress = { aniExpProgress })
-    }
+//    }
 }

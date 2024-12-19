@@ -77,6 +77,14 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         _viewModelIsReady.value = true
     }
 
+    private fun reset() {
+        getNextDamage()
+        createNewRowOfAliens()
+    }
+
+    private fun getNextDamage() {
+        _nextDamage.intValue = (4..6).random()
+    }
 
     private fun createNewRowOfAliens() {
         val newAliens: MutableList<USO> = mutableListOf()
@@ -100,9 +108,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         }
     }
 
-    private fun getNextDamage() {
-        _nextDamage.intValue = (4..6).random()
-    }
 
     private fun gameOverCheck(): Boolean {
         if (_aliens.value.size > 30) return true
@@ -149,7 +154,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
                 _aliens.tryEmit(newList)
             }
         }
-
         return hasChanged
     }
 
@@ -164,6 +168,11 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
 //        }
 //    }
 
+    fun animationFinished() {
+        _gameState.value = GameState.CleanUp
+    }
+
+
     fun resetGame() {
         viewModelScope.launch {
             _aliens.emit(emptyList())
@@ -172,10 +181,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         _gameState.value = GameState.Preparing
     }
 
-    private fun reset() {
-        getNextDamage()
-        createNewRowOfAliens()
-    }
 
     private fun cleanUp() {
         cleanUpScraps()
@@ -226,10 +231,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
                 _aliens.emit(newList)
             }
         }
-    }
-
-    fun animationFinished() {
-        _gameState.value = GameState.CleanUp
     }
 
 

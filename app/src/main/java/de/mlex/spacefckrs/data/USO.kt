@@ -9,10 +9,7 @@ interface USO {
 data class Alien(
     val type: Int = 0,
     var life: Int = 0,
-    override val id: UUID = UUID.randomUUID()
-) : USO
-
-data class DestroyedOne(
+    var hitHart: Boolean = false,
     override val id: UUID = UUID.randomUUID()
 ) : USO
 

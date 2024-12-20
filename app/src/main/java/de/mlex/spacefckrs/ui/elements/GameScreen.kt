@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.mlex.spacefckrs.SpaceViewModel
 import de.mlex.spacefckrs.data.Alien
-import de.mlex.spacefckrs.data.DestroyedOne
 import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 
@@ -78,7 +77,6 @@ fun AttackerScreen(
                 when (it) {
                     is JustSpace -> Spacer(Modifier.size(figureHeight))
                     is Alien -> DrawAlien(it, modifier = Modifier.size(figureHeight))
-                    is DestroyedOne -> Spacer(Modifier.size(figureHeight))
                     is JustScrap -> DrawAnimation(viewModel, figureHeight)
                 }
             }

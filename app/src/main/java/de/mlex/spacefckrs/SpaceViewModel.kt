@@ -12,9 +12,11 @@ import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 import de.mlex.spacefckrs.data.USO
 import de.mlex.spacefckrs.soundfx.AndroidAudioPlayer
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 enum class GameState {
     GameOver, WaitingForPlayer, ProcessingUsingInput, IsAnimating, CleanUp, Preparing
@@ -60,7 +62,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
                     }
 
                     GameState.IsAnimating -> {
-                        //animateExplosion()
+                        animateExplosion()
                     }
 
                     GameState.CleanUp -> {
@@ -143,34 +145,56 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
                     }
                     if (field.life == 0) {
                         hasChanged = true
-                        JustScrap()
+                        field.hitHart = true
+                        field
                     } else field
                 } else field
             }.reversed()
 
         if (hasChanged) {
-            _gameState.value = GameState.IsAnimating
             viewModelScope.launch {
                 _aliens.tryEmit(newList)
+                _gameState.value = GameState.IsAnimating
             }
         }
         return hasChanged
     }
 
-//    private fun animateExplosion() {
-//        val newList = _aliens.value.map {
-//            if (it is DestroyedOne) {
-//                JustScrap()
-//            } else it
-//        }
-//        viewModelScope.launch {
-//            _aliens.emit(newList)
-//        }
-//    }
+    private fun animateExplosion() {
+        var onlyOnce = false
+        val newList = _aliens.value
+            .reversed()
+            .map {
+                if (it is Alien && it.hitHart && !onlyOnce) {
+                    onlyOnce = true
+                    JustScrap()
+                } else it
+            }.reversed()
 
-    fun animationFinished() {
-        _gameState.value = GameState.CleanUp
+        viewModelScope.launch {
+            _aliens.emit(newList)
+        }
+
+        viewModelScope.launch {
+            delay(0.3.seconds)
+            val moreScrap = _aliens.value.find {
+                (it is Alien && it.hitHart)
+            }
+            if (moreScrap != null) animateExplosion()
+            else {
+                delay(0.5.seconds)
+                _gameState.value = GameState.CleanUp
+            }
+        }
     }
+
+//    fun animationFinished() {
+//        val moreScrap = _aliens.value.find {
+//            (it is Alien && it.hitHart)
+//        }
+//        if (moreScrap != null) animateExplosion()
+//        else _gameState.value = GameState.CleanUp
+//    }
 
 
     fun resetGame() {

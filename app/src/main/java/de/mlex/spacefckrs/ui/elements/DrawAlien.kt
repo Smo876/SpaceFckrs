@@ -16,6 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.mlex.spacefckrs.data.Alien
+import de.mlex.spacefckrs.ui.theme.secondaryDark
 
 @Composable
 fun DrawAlien(alien: Alien, modifier: Modifier = Modifier) {
@@ -30,10 +31,11 @@ fun DrawAlien(alien: Alien, modifier: Modifier = Modifier) {
             painter = painterResource(alien.type)
         )
         Text(
-            modifier = Modifier.padding(bottom = 16.dp, end = 8.dp),
+            modifier = Modifier.padding(bottom = 20.dp, end = 8.dp),
             text = "${alien.life}",
             fontWeight = FontWeight.ExtraBold,
             style = TextStyle(
+                color = secondaryDark,
                 shadow = Shadow(
                     color = Color.Black, Offset(-1.0f, -1.0f), blurRadius = 4f
                 )

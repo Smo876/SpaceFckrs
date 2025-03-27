@@ -7,12 +7,12 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -27,6 +27,8 @@ import de.mlex.spacefckrs.ui.elements.GameOverBox
 import de.mlex.spacefckrs.ui.elements.GameScreen
 import de.mlex.spacefckrs.ui.elements.TopBar
 import de.mlex.spacefckrs.ui.theme.SpaceFckrsTheme
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : ComponentActivity() {
 
@@ -37,8 +39,6 @@ class MainActivity : ComponentActivity() {
         viewModel.setSound(spacePreference.getSound())
 
         super.onCreate(savedInstanceState)
-
-        enableEdgeToEdge()
 
         installSplashScreen().apply {
             setKeepOnScreenCondition {
@@ -68,7 +68,6 @@ class MainActivity : ComponentActivity() {
                 zoomY.start()
             }
         }
-
         setContent {
             SpaceFckrsTheme {
                 ScreenSpaceFckrs(viewModel, spacePreference)
@@ -90,7 +89,10 @@ fun ScreenSpaceFckrs(
     val highscore = remember { mutableIntStateOf(spacePreference.getHighScore()) }
     val soundOn = remember { mutableStateOf(spacePreference.getSound()) }
     val newHighscore = remember { mutableStateOf(false) }
-
+    LaunchedEffect(true) {
+        delay(0.3.seconds)
+        viewModel.playDuedeldueSound()
+    }
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -106,7 +108,7 @@ fun ScreenSpaceFckrs(
         },
         bottomBar = {
             BottomBar(
-                viewModel.nextDamage.intValue, soundOn.value,
+                viewModel, soundOn.value,
                 resetGame = {
                     if (viewModel.score.intValue > highscore.intValue) {
                         highscore.intValue = viewModel.score.intValue
@@ -117,11 +119,10 @@ fun ScreenSpaceFckrs(
                 switchSoundSetting = {
                     soundOn.value = !soundOn.value
                     viewModel.setSound(soundOn.value)
+                    viewModel.playPiepSound()
                     spacePreference.setSound(soundOn.value)
                 }
             )
         },
     )
 }
-
-//TODO: refactor sound on off and why is there no sound by shoot no enemy?

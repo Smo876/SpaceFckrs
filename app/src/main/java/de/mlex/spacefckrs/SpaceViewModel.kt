@@ -1,6 +1,7 @@
 package de.mlex.spacefckrs
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.asIntState
 import androidx.compose.runtime.mutableIntStateOf
@@ -13,29 +14,18 @@ import de.mlex.spacefckrs.data.USO
 import de.mlex.spacefckrs.soundfx.AndroidAudioPlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
 enum class GameState {
-    GameOver, GameIsRunning
+    GameOver, WaitingForPlayer, ProcessingUsingInput, IsAnimating, CleanUp, Preparing
 }
-
-enum class CannonState {
-    IsReady, IsFiring, WasDestroyed
-}
-
 
 class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
 
-    val gameState: StateFlow<GameState>
-
-    private val _cannonState = MutableStateFlow(CannonState.IsReady)
-    val cannonState = _cannonState.asStateFlow()
+    private val _gameState = MutableStateFlow(GameState.Preparing)
+    val gameState = _gameState.asStateFlow()
 
     private val _viewModelIsReady = MutableStateFlow(false)
     val viewModelIsReady = _viewModelIsReady.asStateFlow()
@@ -50,33 +40,52 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     val score = _score.asIntState()
 
     private val _soundIsOn = MutableStateFlow(false)
-    val soundIsOn = _soundIsOn.asStateFlow()
+    private val soundIsOn = _soundIsOn.asStateFlow()
 
     private val audioPlayer by lazy {
         AndroidAudioPlayer(appContext)
     }
 
     init {
-        reset()
-        gameState = aliens.map {
-            if (it.size > 30) {
-                _cannonState.value = CannonState.WasDestroyed
-                GameState.GameOver
-            } else GameState.GameIsRunning
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, GameState.GameIsRunning)
+        viewModelScope.launch {
+            _gameState.collect {
+                Log.i("GameState", it.name)
+                when (it) {
+                    GameState.Preparing -> {
+                        reset()
+                    }
+
+                    GameState.WaitingForPlayer -> {
+                    }
+
+                    GameState.ProcessingUsingInput -> {
+                    }
+
+                    GameState.IsAnimating -> {
+                        animateExplosion()
+                    }
+
+                    GameState.CleanUp -> {
+                        cleanUp()
+                    }
+
+                    GameState.GameOver -> {
+                        playOhSound()
+                    }
+                }
+            }
+        }
+
         _viewModelIsReady.value = true
     }
 
-    fun setSound(soundIsOn: Boolean) {
-        _soundIsOn.value = soundIsOn
+    private fun reset() {
+        getNextDamage()
+        createNewRowOfAliens()
     }
 
-    private fun reset() {
-        createNewRowOfAliens()
-        getNextDamage()
-        _cannonState.value = CannonState.IsReady
-        //if (_soundIsOn.value) audioPlayer.stopPlaying()
-
+    private fun getNextDamage() {
+        _nextDamage.intValue = (4..6).random()
     }
 
     private fun createNewRowOfAliens() {
@@ -96,15 +105,27 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         newAliens += _aliens.value.toMutableList()
         viewModelScope.launch {
             _aliens.emit(newAliens)
+            if (gameOverCheck()) _gameState.value = GameState.GameOver
+            else _gameState.value = GameState.WaitingForPlayer
         }
     }
 
-    private fun getNextDamage() {
-        _nextDamage.intValue = (4..6).random()
+
+    private fun gameOverCheck(): Boolean {
+        if (_aliens.value.size > 30) return true
+        else return false
     }
 
-    fun determineDamageAndExplode(cannon: Int) {
-        _cannonState.value = CannonState.IsFiring
+    fun onShot() {
+        _gameState.value = GameState.ProcessingUsingInput
+    }
+
+    fun afterShot(cannon: Int) {
+        if (determineDamage(cannon)) GameState.IsAnimating
+        else _gameState.value = GameState.CleanUp
+    }
+
+    private fun determineDamage(cannon: Int): Boolean {
         var remainingDamage = _nextDamage.intValue
         var hasChanged = false
         val newList = _aliens.value
@@ -124,23 +145,73 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
                     }
                     if (field.life == 0) {
                         hasChanged = true
-                        JustScrap()
+                        field.hitHart = true
+                        field
                     } else field
                 } else field
             }.reversed()
+
         if (hasChanged) {
             viewModelScope.launch {
-                delay(0.2.seconds)
                 _aliens.tryEmit(newList)
+                _gameState.value = GameState.IsAnimating
             }
-        } else cleanUp()
+        }
+        return hasChanged
     }
 
-    fun cleanUp() {
+    private fun animateExplosion() {
+        var onlyOnce = false
+        val newList = _aliens.value
+            .reversed()
+            .map {
+                if (it is Alien && it.hitHart && !onlyOnce) {
+                    onlyOnce = true
+                    JustScrap()
+                } else it
+            }.reversed()
+
+        viewModelScope.launch {
+            _aliens.emit(newList)
+        }
+
+        viewModelScope.launch {
+            delay(0.3.seconds)
+            val moreScrap = _aliens.value.find {
+                (it is Alien && it.hitHart)
+            }
+            if (moreScrap != null) animateExplosion()
+            else {
+                delay(0.5.seconds)
+                _gameState.value = GameState.CleanUp
+            }
+        }
+    }
+
+//    fun animationFinished() {
+//        val moreScrap = _aliens.value.find {
+//            (it is Alien && it.hitHart)
+//        }
+//        if (moreScrap != null) animateExplosion()
+//        else _gameState.value = GameState.CleanUp
+//    }
+
+
+    fun resetGame() {
+        viewModelScope.launch {
+            _aliens.emit(emptyList())
+        }
+        _score.intValue = 0
+        _gameState.value = GameState.Preparing
+    }
+
+
+    private fun cleanUp() {
         cleanUpScraps()
         cleanEmptyRows()
-        reset()
+        _gameState.value = GameState.Preparing
     }
+
 
     private fun cleanUpScraps() {
         var hasChanged = false
@@ -186,13 +257,9 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         }
     }
 
-    fun resetGame() {
-        viewModelScope.launch {
-            _aliens.emit(emptyList())
-        }
-        _score.intValue = 0
-        _cannonState.value = CannonState.IsReady
-        reset()
+
+    fun setSound(soundIsOn: Boolean) {
+        _soundIsOn.value = soundIsOn
     }
 
     fun playPiuSound() {
@@ -202,5 +269,18 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     fun playBrrrSound() {
         if (soundIsOn.value) audioPlayer.playFile(R.raw.brrr)
     }
+
+    fun playDuedeldueSound() {
+        if (soundIsOn.value) audioPlayer.playFile(R.raw.duedeldue)
+    }
+
+    fun playPiepSound() {
+        if (soundIsOn.value) audioPlayer.playFile(R.raw.piep)
+    }
+
+    private fun playOhSound() {
+        if (soundIsOn.value) audioPlayer.playFile(R.raw.oh)
+    }
+
 }
 

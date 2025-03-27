@@ -17,26 +17,32 @@ import de.mlex.spacefckrs.SpaceViewModel
 
 @Composable
 fun DrawAnimation(viewModel: SpaceViewModel, figureHeight: Dp) {
-    val aniExplosion by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.explosion))
+    val aniExplosion by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.explo))
     val aniExpProgress by animateLottieCompositionAsState(
         composition = aniExplosion,
-        isPlaying = true
+        isPlaying = true,
+        iterations = 1
     )
+//        LaunchedEffect(key1 = aniExpProgress) {
+//            if ("%.1f".format(aniExpProgress).toFloat() == 0.5f) {
+//                viewModel.animationFinished()
+//            }
+//
+//    }
 
-    LaunchedEffect(key1 = aniExpProgress) {
-    //    if (aniExpProgress == 0.3f) viewModel.nextAni
-        if (aniExpProgress == 1f) viewModel.cleanUp()
-    }
+//    LaunchedEffect(key1 = aniExpProgress) {
+//        if (aniExpProgress == 1f) {
+//            viewModel.animationFinished()
+//        }
+//    }
 
     LaunchedEffect(true) {
         viewModel.playBrrrSound()
     }
 
-    if (aniExpProgress != 1f) {
-        LottieAnimation(modifier = Modifier
-            .size(figureHeight)
-            .padding(top = 12.dp),
-            composition = aniExplosion,
-            progress = { aniExpProgress })
-    }
+    LottieAnimation(modifier = Modifier
+        .size(figureHeight)
+        .padding(top = 12.dp),
+        composition = aniExplosion,
+        progress = { aniExpProgress })
 }

@@ -46,7 +46,7 @@ fun GameScreen(
             Modifier
                 .padding(bottom = 18.dp)
                 .height(50.dp)
-        ) { viewModel.determineDamageAndExplode(it) }
+        )
 
         AttackerScreen(
             viewModel,
@@ -71,13 +71,12 @@ fun AttackerScreen(
     ) {
         val figureHeight = maxHeight / 7
         LazyVerticalGrid(
-
             columns = GridCells.Fixed(5),
         ) {
-            items(aliens) {
+            items(aliens, { alien -> alien.id } ){
                 when (it) {
-                    is Alien -> DrawAlien(it, modifier = Modifier.size(figureHeight))
                     is JustSpace -> Spacer(Modifier.size(figureHeight))
+                    is Alien -> DrawAlien(it, modifier = Modifier.size(figureHeight))
                     is JustScrap -> DrawAnimation(viewModel, figureHeight)
                 }
             }
@@ -88,8 +87,7 @@ fun AttackerScreen(
 @Composable
 fun DefenseScreen(
     viewModel: SpaceViewModel,
-    modifier: Modifier,
-    onShoot: (Int) -> Unit
+    modifier: Modifier
 ) {
     Row(
         modifier
@@ -99,7 +97,7 @@ fun DefenseScreen(
     ) {
         for (i in 1..5) {
             DrawCannon(
-                viewModel, i, onShoot, modifier = Modifier
+                viewModel, i, modifier = Modifier
                     .fillMaxHeight()
                     .weight(1F)
             )

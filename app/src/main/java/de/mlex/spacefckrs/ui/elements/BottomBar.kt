@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.mlex.spacefckrs.R
+import de.mlex.spacefckrs.SpaceViewModel
 import de.mlex.spacefckrs.ui.theme.backgroundDark
 import de.mlex.spacefckrs.ui.theme.onPrimaryContainerDark
 import kotlinx.coroutines.delay
@@ -42,7 +43,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun BottomBar(
-    nextDamage: Int,
+    viewModel: SpaceViewModel,
     soundOn: Boolean,
     resetGame: () -> Unit,
     switchSoundSetting: () -> Unit
@@ -79,7 +80,7 @@ fun BottomBar(
                             fontSize = 20.sp
                         )
                     ) {
-                        append("$nextDamage")
+                        append("${viewModel.nextDamage.intValue}")
                     }
                 })
 
@@ -110,7 +111,9 @@ fun BottomBar(
                 val scope1 = rememberCoroutineScope()
                 val scope2 = rememberCoroutineScope()
                 val scope3 = rememberCoroutineScope()
-                IconButton(onClick = {
+                IconButton(modifier = Modifier.padding(start = 8.dp),
+                    onClick = {
+                    viewModel.playDuedeldueSound()
                     scope1.launch { degree.stop() }
                     scope2.launch {
                         if (degree.value != 0f) degree.snapTo(0f)
@@ -123,7 +126,7 @@ fun BottomBar(
                         )
                     }
                     scope3.launch {
-                        delay(0.5.seconds)
+                        delay(0.8.seconds)
                         resetGame()
                     }
 

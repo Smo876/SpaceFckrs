@@ -19,12 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -46,7 +44,7 @@ fun BottomBar(
     viewModel: SpaceViewModel,
     soundOn: Boolean,
     resetGame: () -> Unit,
-    switchSoundSetting: () -> Unit
+    switchSoundSetting: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -59,8 +57,7 @@ fun BottomBar(
                 .fillMaxWidth()
                 .padding(0.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 buildAnnotatedString {
@@ -68,8 +65,8 @@ fun BottomBar(
                         style = SpanStyle(
                             color = Color.LightGray,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
+                            fontSize = 20.sp,
+                        ),
                     ) {
                         append("FORCE: ")
                     }
@@ -77,14 +74,15 @@ fun BottomBar(
                         style = SpanStyle(
                             color = onPrimaryContainerDark,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
+                            fontSize = 20.sp,
+                        ),
                     ) {
-                        append("${viewModel.nextDamage.intValue}")
+                        append(viewModel.nextDamage.intValue.toString())
                     }
-                })
+                },
+            )
 
-            Row() {
+            Row {
                 if (soundOn) {
                     IconButton(onClick = { switchSoundSetting() }) {
                         Icon(
@@ -92,7 +90,7 @@ fun BottomBar(
                             contentDescription = "sound",
                             modifier = Modifier
                                 .size(30.dp),
-                            tint = Color.LightGray
+                            tint = Color.LightGray,
                         )
                     }
                 } else {
@@ -102,7 +100,7 @@ fun BottomBar(
                             contentDescription = "sound",
                             modifier = Modifier
                                 .size(30.dp),
-                            tint = Color.LightGray
+                            tint = Color.LightGray,
                         )
                     }
                 }
@@ -111,33 +109,34 @@ fun BottomBar(
                 val scope1 = rememberCoroutineScope()
                 val scope2 = rememberCoroutineScope()
                 val scope3 = rememberCoroutineScope()
-                IconButton(modifier = Modifier.padding(start = 8.dp),
+                IconButton(
+                    modifier = Modifier.padding(start = 8.dp),
                     onClick = {
-                    viewModel.playDuedeldueSound()
-                    scope1.launch { degree.stop() }
-                    scope2.launch {
-                        if (degree.value != 0f) degree.snapTo(0f)
-                        degree.animateTo(
-                            360f,
-                            SpringSpec(
-                                dampingRatio = 0.75f,
-                                stiffness = 100f,
+                        viewModel.playDuedeldueSound()
+                        scope1.launch { degree.stop() }
+                        scope2.launch {
+                            if (degree.value != 0f) degree.snapTo(0f)
+                            degree.animateTo(
+                                360f,
+                                SpringSpec(
+                                    dampingRatio = 0.75f,
+                                    stiffness = 100f,
+                                ),
                             )
-                        )
-                    }
-                    scope3.launch {
-                        delay(0.8.seconds)
-                        resetGame()
-                    }
-
-                }) {
+                        }
+                        scope3.launch {
+                            delay(0.8.seconds)
+                            resetGame()
+                        }
+                    },
+                ) {
                     Icon(
                         Icons.Filled.Refresh,
                         contentDescription = "refresh",
                         modifier = Modifier
                             .rotate(degree.value)
                             .size(30.dp),
-                        tint = Color.LightGray
+                        tint = Color.LightGray,
                     )
                 }
             }
@@ -145,20 +144,14 @@ fun BottomBar(
     }
 }
 
-fun Modifier.bottomBarBorder(strokeWidth: Dp, color: Color) = composed(
-    factory = {
-        val density = LocalDensity.current
-        val strokeWidthPx = density.run { strokeWidth.toPx() }
-
-        Modifier.drawBehind {
-            val width = size.width
-            val height = 0f
-            drawLine(
-                color = color,
-                start = Offset(x = 0f, y = height),
-                end = Offset(x = width, y = height),
-                strokeWidth = strokeWidthPx
-            )
-        }
-    }
-)
+fun Modifier.bottomBarBorder(strokeWidth: Dp, color: Color): Modifier = this.drawBehind {
+    val strokeWidthPx = strokeWidth.toPx()
+    val width = size.width
+    val height = 0f
+    drawLine(
+        color = color,
+        start = Offset(x = 0f, y = height),
+        end = Offset(x = width, y = height),
+        strokeWidth = strokeWidthPx,
+    )
+}

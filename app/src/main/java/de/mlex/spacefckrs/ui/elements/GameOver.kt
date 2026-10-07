@@ -21,22 +21,20 @@ import de.mlex.spacefckrs.ui.theme.errorContainerDark
 @Composable
 fun GameOverBox(score: Int, newHighscore: Boolean) {
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
         Spacer(
             modifier = Modifier
                 .matchParentSize()
                 .fillMaxSize()
-                .background(color = Color.DarkGray.copy(alpha = .8f))
+                .background(color = Color.DarkGray.copy(alpha = .8f)),
         )
         val gradientColors1 = listOf(errorContainerDark, Color.Yellow)
         val gradientColors2 = listOf(Color.Green, Color.Blue)
         Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = "GAME OVER",
@@ -46,17 +44,16 @@ fun GameOverBox(score: Int, newHighscore: Boolean) {
                 textAlign = TextAlign.Center,
                 style = TextStyle(
                     brush = Brush.linearGradient(
-                        colors = gradientColors1
-                    )
-                )
+                        colors = gradientColors1,
+                    ),
+                ),
             )
             Text(
                 text = "Score: $score",
                 fontSize = 30.sp,
                 color = Color.White,
                 textAlign = TextAlign.Center,
-
-                )
+            )
             if (newHighscore) {
                 Text(
                     text = "NEW HIGHSCORE!",
@@ -66,9 +63,9 @@ fun GameOverBox(score: Int, newHighscore: Boolean) {
                     textAlign = TextAlign.Center,
                     style = TextStyle(
                         brush = Brush.linearGradient(
-                            colors = gradientColors2
-                        )
-                    )
+                            colors = gradientColors2,
+                        ),
+                    ),
                 )
             }
         }

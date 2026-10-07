@@ -7,6 +7,7 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -32,14 +33,9 @@ import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : ComponentActivity() {
 
+    private val viewModel: SpaceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val spacePreference = Preference(this)
-        val viewModel by viewModels<SpaceViewModel>()
-        viewModel.setSound(spacePreference.getSound())
-
-        super.onCreate(savedInstanceState)
-
         installSplashScreen().apply {
             setKeepOnScreenCondition {
                 !viewModel.viewModelIsReady.value
@@ -49,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     screen.iconView,
                     View.SCALE_X,
                     0.4f,
-                    0.0f
+                    0.0f,
                 )
                 zoomX.interpolator = OvershootInterpolator()
                 zoomX.duration = 500L
@@ -58,7 +54,7 @@ class MainActivity : ComponentActivity() {
                     screen.iconView,
                     View.SCALE_Y,
                     0.4f,
-                    0.0f
+                    0.0f,
                 )
                 zoomY.interpolator = OvershootInterpolator()
                 zoomY.duration = 500L
@@ -68,10 +64,16 @@ class MainActivity : ComponentActivity() {
                 zoomY.start()
             }
         }
+
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+
+        val spacePreference = Preference(this)
+        viewModel.setSound(spacePreference.getSound())
+
         setContent {
             SpaceFckrsTheme {
                 ScreenSpaceFckrs(viewModel, spacePreference)
-
             }
         }
     }
@@ -79,17 +81,17 @@ class MainActivity : ComponentActivity() {
 
 @SuppressLint(
     "UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition",
-    "UnusedBoxWithConstraintsScope"
+    "UnusedBoxWithConstraintsScope",
 )
 @Composable
 fun ScreenSpaceFckrs(
     viewModel: SpaceViewModel,
-    spacePreference: Preference
+    spacePreference: Preference,
 ) {
     val highscore = remember { mutableIntStateOf(spacePreference.getHighScore()) }
     val soundOn = remember { mutableStateOf(spacePreference.getSound()) }
-    val newHighscore = remember { mutableStateOf(false) }
-    LaunchedEffect(true) {
+    val newHighscore = remember { mutableStateOf(value = false) }
+    LaunchedEffect(Unit) {
         delay(0.3.seconds)
         viewModel.playDuedeldueSound()
     }
@@ -108,7 +110,8 @@ fun ScreenSpaceFckrs(
         },
         bottomBar = {
             BottomBar(
-                viewModel, soundOn.value,
+                viewModel = viewModel,
+                soundOn = soundOn.value,
                 resetGame = {
                     if (viewModel.score.intValue > highscore.intValue) {
                         highscore.intValue = viewModel.score.intValue
@@ -116,13 +119,12 @@ fun ScreenSpaceFckrs(
                     }
                     viewModel.resetGame()
                 },
-                switchSoundSetting = {
-                    soundOn.value = !soundOn.value
-                    viewModel.setSound(soundOn.value)
-                    viewModel.playPiepSound()
-                    spacePreference.setSound(soundOn.value)
-                }
-            )
+            ) {
+                soundOn.value = !soundOn.value
+                viewModel.setSound(soundOn.value)
+                viewModel.playPiepSound()
+                spacePreference.setSound(soundOn.value)
+            }
         },
     )
 }

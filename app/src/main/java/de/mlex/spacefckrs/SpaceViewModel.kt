@@ -27,7 +27,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     private val _gameState = MutableStateFlow(GameState.Preparing)
     val gameState = _gameState.asStateFlow()
 
-    private val _viewModelIsReady = MutableStateFlow(false)
+    private val _viewModelIsReady = MutableStateFlow(value = false)
     val viewModelIsReady = _viewModelIsReady.asStateFlow()
 
     private var _aliens = MutableStateFlow<List<USO>>(emptyList())
@@ -39,7 +39,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     private val _score: MutableIntState = mutableIntStateOf(0)
     val score = _score.asIntState()
 
-    private val _soundIsOn = MutableStateFlow(false)
+    private val _soundIsOn = MutableStateFlow(value = false)
     private val soundIsOn = _soundIsOn.asStateFlow()
 
     private val audioPlayer by lazy {
@@ -92,7 +92,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         val newAliens: MutableList<USO> = mutableListOf()
         do {
             newAliens.clear()
-            for (n in 1..5) {
+            repeat(5) {
                 when ((0..12).random()) {
                     0 -> newAliens.add(Alien(R.drawable.sf_alien1, 1))
                     1 -> newAliens.add(Alien(R.drawable.sf_alien2, 2))
@@ -101,7 +101,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
                     else -> newAliens.add(JustSpace())
                 }
             }
-        } while (!newAliens.any { it is Alien })
+        } while (newAliens.none { it is Alien })
         newAliens += _aliens.value.toMutableList()
         viewModelScope.launch {
             _aliens.emit(newAliens)
@@ -110,10 +110,8 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         }
     }
 
-
     private fun gameOverCheck(): Boolean {
-        if (_aliens.value.size > 30) return true
-        else return false
+        return _aliens.value.size > 30
     }
 
     fun onShot() {
@@ -121,8 +119,9 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     }
 
     fun afterShot(cannon: Int) {
-        if (determineDamage(cannon)) GameState.IsAnimating
-        else _gameState.value = GameState.CleanUp
+        if (!determineDamage(cannon)) {
+            _gameState.value = GameState.CleanUp
+        }
     }
 
     private fun determineDamage(cannon: Int): Boolean {
@@ -131,7 +130,7 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         val newList = _aliens.value
             .reversed()
             .mapIndexed { index, field ->
-                if (field is Alien && index % 5 == 5 - cannon) {
+                if (field is Alien && (index % 5 == 5 - cannon)) {
                     if (remainingDamage > 0) {
                         if (field.life >= remainingDamage) {
                             field.life -= remainingDamage
@@ -188,15 +187,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         }
     }
 
-//    fun animationFinished() {
-//        val moreScrap = _aliens.value.find {
-//            (it is Alien && it.hitHart)
-//        }
-//        if (moreScrap != null) animateExplosion()
-//        else _gameState.value = GameState.CleanUp
-//    }
-
-
     fun resetGame() {
         viewModelScope.launch {
             _aliens.emit(emptyList())
@@ -205,13 +195,11 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         _gameState.value = GameState.Preparing
     }
 
-
     private fun cleanUp() {
         cleanUpScraps()
         cleanEmptyRows()
         _gameState.value = GameState.Preparing
     }
-
 
     private fun cleanUpScraps() {
         var hasChanged = false
@@ -257,7 +245,6 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
         }
     }
 
-
     fun setSound(soundIsOn: Boolean) {
         _soundIsOn.value = soundIsOn
     }
@@ -281,6 +268,4 @@ class SpaceViewModel(appContext: Application) : AndroidViewModel(appContext) {
     private fun playOhSound() {
         if (soundIsOn.value) audioPlayer.playFile(R.raw.oh)
     }
-
 }
-

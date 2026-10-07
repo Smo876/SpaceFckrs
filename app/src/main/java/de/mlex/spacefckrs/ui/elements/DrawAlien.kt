@@ -21,25 +21,26 @@ import de.mlex.spacefckrs.ui.theme.secondaryDark
 @Composable
 fun DrawAlien(alien: Alien, modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
-            .wrapContentSize(),
-        contentAlignment = Alignment.BottomEnd
+        modifier = modifier.wrapContentSize(),
+        contentAlignment = Alignment.BottomEnd,
     ) {
         Image(
             modifier = modifier.padding(6.dp),
             contentDescription = "Alien",
-            painter = painterResource(alien.type)
+            painter = painterResource(alien.type),
         )
         Text(
             modifier = Modifier.padding(bottom = 20.dp, end = 8.dp),
-            text = "${alien.life}",
+            text = alien.life.toString(),
             fontWeight = FontWeight.ExtraBold,
             style = TextStyle(
                 color = secondaryDark,
                 shadow = Shadow(
-                    color = Color.Black, Offset(-1.0f, -1.0f), blurRadius = 4f
-                )
-            )
+                    color = Color.Black,
+                    offset = Offset(-1.0f, -1.0f),
+                    blurRadius = 4f,
+                ),
+            ),
         )
     }
 }

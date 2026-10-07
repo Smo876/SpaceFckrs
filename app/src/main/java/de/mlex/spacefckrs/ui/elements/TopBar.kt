@@ -10,12 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -40,9 +38,8 @@ fun TopBar(score: Int, hightscore: Int) {
                 .fillMaxWidth()
                 .padding(6.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             val gradientColors = listOf(Color.Blue, Color.Red)
             Text(
                 text = "SPACE FCKRS",
@@ -51,9 +48,9 @@ fun TopBar(score: Int, hightscore: Int) {
                 color = Color.Blue,
                 style = TextStyle(
                     brush = Brush.linearGradient(
-                        colors = gradientColors
-                    )
-                )
+                        colors = gradientColors,
+                    ),
+                ),
             )
 
             Text(
@@ -62,8 +59,8 @@ fun TopBar(score: Int, hightscore: Int) {
                         style = SpanStyle(
                             color = Color.LightGray,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
+                            fontSize = 20.sp,
+                        ),
                     ) {
                         append("SCORE: ")
                     }
@@ -71,17 +68,17 @@ fun TopBar(score: Int, hightscore: Int) {
                         style = SpanStyle(
                             color = onPrimaryContainerDark,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
+                            fontSize = 20.sp,
+                        ),
                     ) {
-                        append("$score")
+                        append(score.toString())
                     }
                     withStyle(
                         style = SpanStyle(
                             color = Color.LightGray,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
+                            fontSize = 20.sp,
+                        ),
                     ) {
                         append(" (")
                     }
@@ -89,40 +86,35 @@ fun TopBar(score: Int, hightscore: Int) {
                         style = SpanStyle(
                             color = onPrimaryContainerDark,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
+                            fontSize = 20.sp,
+                        ),
                     ) {
-                        append("$hightscore")
+                        append(hightscore.toString())
                     }
                     withStyle(
                         style = SpanStyle(
                             color = Color.LightGray,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
+                            fontSize = 20.sp,
+                        ),
                     ) {
                         append(")")
                     }
-                })
+                },
+            )
         }
     }
 }
 
-fun Modifier.topBarBorder(strokeWidth: Dp, color: Color) = composed(
-    factory = {
-        val density = LocalDensity.current
-        val strokeWidthPx = density.run { strokeWidth.toPx() }
+fun Modifier.topBarBorder(strokeWidth: Dp, color: Color): Modifier = this.drawBehind {
+    val strokeWidthPx = strokeWidth.toPx()
+    val width = size.width
+    val height = size.height - (strokeWidthPx / 2f)
 
-        Modifier.drawBehind {
-            val width = size.width
-            val height = size.height - strokeWidthPx / 2
-
-            drawLine(
-                color = color,
-                start = Offset(x = 0f, y = height),
-                end = Offset(x = width, y = height),
-                strokeWidth = strokeWidthPx
-            )
-        }
-    }
-)
+    drawLine(
+        color = color,
+        start = Offset(x = 0f, y = height),
+        end = Offset(x = width, y = height),
+        strokeWidth = strokeWidthPx,
+    )
+}

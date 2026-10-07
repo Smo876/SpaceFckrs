@@ -2,12 +2,10 @@ package de.mlex.spacefckrs.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 class Preference(context: Context) {
 
-    private val PREF_NAME = "SharedPreferencesSpaceFCKRS"
-    private val PREF_HIGHSCORE = "HighScore"
-    private val PREF_SOUND = "Sound"
     private val preference: SharedPreferences =
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
@@ -16,9 +14,9 @@ class Preference(context: Context) {
     }
 
     fun setHighScore(score: Int) {
-        val editor = preference.edit()
-        editor.putInt(PREF_HIGHSCORE, score)
-        editor.apply()
+        preference.edit {
+            putInt(PREF_HIGHSCORE, score)
+        }
     }
 
     fun getSound(): Boolean {
@@ -26,8 +24,14 @@ class Preference(context: Context) {
     }
 
     fun setSound(soundOn: Boolean) {
-        val editor = preference.edit()
-        editor.putBoolean(PREF_SOUND, soundOn)
-        editor.apply()
+        preference.edit {
+            putBoolean(PREF_SOUND, soundOn)
+        }
+    }
+
+    companion object {
+        private const val PREF_NAME = "SharedPreferencesSpaceFCKRS"
+        private const val PREF_HIGHSCORE = "HighScore"
+        private const val PREF_SOUND = "Sound"
     }
 }

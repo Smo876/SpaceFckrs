@@ -1,6 +1,5 @@
 package de.mlex.spacefckrs.ui.elements
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,7 +27,8 @@ import de.mlex.spacefckrs.data.Alien
 import de.mlex.spacefckrs.data.JustScrap
 import de.mlex.spacefckrs.data.JustSpace
 
-@SuppressLint("StateFlowValueCalledInComposition")
+import android.annotation.SuppressLint
+
 @Composable
 fun GameScreen(
     viewModel: SpaceViewModel,
@@ -39,20 +39,20 @@ fun GameScreen(
             .fillMaxSize()
             .padding(padding)
             .background(Color.Black),
-        contentAlignment = Alignment.BottomStart
+        contentAlignment = Alignment.BottomStart,
     ) {
         DefenseScreen(
             viewModel,
             Modifier
                 .padding(bottom = 18.dp)
-                .height(50.dp)
+                .height(50.dp),
         )
 
         AttackerScreen(
             viewModel,
             Modifier
                 .padding(bottom = 18.dp)
-                .fillMaxSize()
+                .fillMaxSize(),
         )
     }
 }
@@ -73,7 +73,7 @@ fun AttackerScreen(
         LazyVerticalGrid(
             columns = GridCells.Fixed(5),
         ) {
-            items(aliens, { alien -> alien.id } ){
+            items(aliens, { alien -> alien.id }) {
                 when (it) {
                     is JustSpace -> Spacer(Modifier.size(figureHeight))
                     is Alien -> DrawAlien(it, modifier = Modifier.size(figureHeight))
@@ -87,19 +87,21 @@ fun AttackerScreen(
 @Composable
 fun DefenseScreen(
     viewModel: SpaceViewModel,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     Row(
         modifier
             .fillMaxSize()
             .padding(start = 12.dp, end = 12.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         for (i in 1..5) {
             DrawCannon(
-                viewModel, i, modifier = Modifier
+                viewModel,
+                i,
+                modifier = Modifier
                     .fillMaxHeight()
-                    .weight(1F)
+                    .weight(1F),
             )
         }
     }

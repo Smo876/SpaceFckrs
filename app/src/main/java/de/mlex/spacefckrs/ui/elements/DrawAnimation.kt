@@ -21,28 +21,18 @@ fun DrawAnimation(viewModel: SpaceViewModel, figureHeight: Dp) {
     val aniExpProgress by animateLottieCompositionAsState(
         composition = aniExplosion,
         isPlaying = true,
-        iterations = 1
+        iterations = 1,
     )
-//        LaunchedEffect(key1 = aniExpProgress) {
-//            if ("%.1f".format(aniExpProgress).toFloat() == 0.5f) {
-//                viewModel.animationFinished()
-//            }
-//
-//    }
 
-//    LaunchedEffect(key1 = aniExpProgress) {
-//        if (aniExpProgress == 1f) {
-//            viewModel.animationFinished()
-//        }
-//    }
-
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         viewModel.playBrrrSound()
     }
 
-    LottieAnimation(modifier = Modifier
-        .size(figureHeight)
-        .padding(top = 12.dp),
+    LottieAnimation(
+        modifier = Modifier
+            .size(figureHeight)
+            .padding(top = 12.dp),
         composition = aniExplosion,
-        progress = { aniExpProgress })
+        progress = { aniExpProgress },
+    )
 }

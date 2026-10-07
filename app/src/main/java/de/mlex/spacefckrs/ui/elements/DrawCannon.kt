@@ -27,16 +27,17 @@ fun DrawCannon(
     cannon: Int,
     modifier: Modifier = Modifier,
 ) {
-    val isShooting = remember { mutableStateOf(false) }
+    val isShooting = remember { mutableStateOf(value = false) }
     val coroutine = rememberCoroutineScope()
     val gameState by viewModel.gameState.collectAsState()
     IconButton(
         modifier = modifier,
-        enabled = (gameState == GameState.WaitingForPlayer),
+        enabled = gameState == GameState.WaitingForPlayer,
         onClick = {
             viewModel.onShot()
             coroutine.animateCannon(isShooting, viewModel, cannon)
-        }) {
+        },
+    ) {
         Image(
             modifier = Modifier.fillMaxSize(),
             contentDescription = "Cannon",
@@ -56,7 +57,7 @@ fun DrawCannon(
 private fun CoroutineScope.animateCannon(
     isShooting: MutableState<Boolean>,
     viewModel: SpaceViewModel,
-    cannon: Int
+    cannon: Int,
 ) {
     isShooting.value = true
     launch {
